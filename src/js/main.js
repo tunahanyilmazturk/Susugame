@@ -1,5 +1,5 @@
 // Giriş noktası: oyun kurallarını ve arayüzü birbirine bağlar.
-import { createGame, startRound, reshuffle, useHint, guess, pass } from "./game.js";
+import { createGame, startRound, reshuffle, useHint, guess, pass, isFinished } from "./game.js";
 import { createUI } from "./ui.js";
 import { toDisplay } from "./utils.js";
 
@@ -7,17 +7,18 @@ const ui = createUI();
 const { el } = ui;
 let game = null;
 
+function startGame() {
+  game = createGame(ui.readNames(), { totalRounds: ui.readRounds() });
+  ui.showGame();
+  newRound();
+}
+
 function newRound() {
+  if (isFinished(game)) return ui.showEnd(game);
   startRound(game);
   ui.setMessage("Ne buldunuz? Tahmininizi yazın.", "info");
   ui.clearGuess();
   ui.render(game);
-}
-
-function startGame() {
-  game = createGame(ui.readNames());
-  ui.showGame();
-  newRound();
 }
 
 function submitGuess() {

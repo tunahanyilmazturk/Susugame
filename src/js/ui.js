@@ -13,9 +13,11 @@ export function createUI() {
     endPanel: $("endPanel"),
     p1: $("p1"),
     p2: $("p2"),
+    rounds: $("rounds"),
     startBtn: $("startBtn"),
     scores: $("scores"),
     roundInfo: $("roundInfo"),
+    category: $("category"),
     tiles: $("tiles"),
     msg: $("msg"),
     guess: $("guess"),
@@ -77,15 +79,20 @@ export function createUI() {
   /** Oyun durumunu ekrana yansıtır. */
   function render(game) {
     const round = game.round;
+    const total = game.totalRounds > 0 ? `${game.roundCount}/${game.totalRounds}` : `${game.roundCount}`;
     renderScores(game);
     el.roundInfo.textContent =
-      `Tur ${game.roundCount} · ${[...round.word].length} harfli · Sıra: ${game.players[game.turn].name}`;
+      `Tur ${total} · ${[...round.word].length} harfli · Sıra: ${game.players[game.turn].name}`;
+    el.category.textContent = `Kategori: ${round.category}`;
     renderTiles(round);
 
     el.guessRow.classList.toggle("hidden", round.done);
     el.actions.classList.toggle("hidden", round.done);
     el.nextRow.classList.toggle("hidden", !round.done);
     el.hintBtn.disabled = round.hinted;
+    el.nextBtn.textContent = game.totalRounds > 0 && game.roundCount >= game.totalRounds
+      ? "Sonuçları gör 🏁"
+      : "Sonraki Kelime ▶";
   }
 
   function showSetup() {
@@ -101,10 +108,10 @@ export function createUI() {
   }
 
   function showEnd(game) {
-    const { players, winner } = summary(game);
+    const { players, winner, rounds } = summary(game);
     const scoreLine = players.map((p) => `${p.name}: ${p.score}`).join("  ·  ");
     const result = winner ? `${winner.name} kazandı!` : "Berabere!";
-    el.finalText.textContent = `${scoreLine}  —  ${result}`;
+    el.finalText.textContent = `${rounds} tur oynandı. ${scoreLine}  —  ${result}`;
     el.game.classList.add("hidden");
     el.endPanel.classList.remove("hidden");
   }
@@ -118,6 +125,7 @@ export function createUI() {
     showGame,
     showEnd,
     readNames: () => [el.p1.value, el.p2.value],
+    readRounds: () => Number(el.rounds.value),
     readGuess: () => el.guess.value,
     clearGuess: () => { el.guess.value = ""; el.guess.focus(); },
     selectGuess: () => el.guess.select(),

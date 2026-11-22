@@ -17,6 +17,13 @@
     <input class="name" id="p1" maxlength="16" value="Oyuncu 1">
     <label for="p2">2. oyuncu</label>
     <input class="name" id="p2" maxlength="16" value="Oyuncu 2">
+    <label for="rounds">Tur sayısı</label>
+    <select id="rounds">
+      <option value="5">5 tur</option>
+      <option value="10" selected>10 tur</option>
+      <option value="15">15 tur</option>
+      <option value="0">Sınırsız</option>
+    </select>
     <button class="primary" id="startBtn">Oyuna Başla</button>
   </section>
 
@@ -24,8 +31,9 @@
   <section id="game" class="hidden">
     <div class="scores" id="scores"></div>
     <div class="round-info" id="roundInfo"></div>
+    <div class="category-row"><span class="category" id="category"></span></div>
     <div class="tiles" id="tiles"></div>
-    <div class="msg" id="msg"></div>
+    <div class="msg" id="msg" role="status" aria-live="polite"></div>
 
     <div class="guess-row" id="guessRow">
       <input type="text" id="guess" placeholder="Doğru kelimeyi yaz" autocomplete="off" autocapitalize="none" spellcheck="false">

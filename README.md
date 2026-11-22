@@ -6,6 +6,8 @@ Harfleri karıştırılmış Türkçe bir kelimenin doğrusunu iki oyuncu birlik
 
 - Oyunu oynamak için: `dist/index.html` dosyasını tarayıcıda açın (kurulum gerekmez, telefonda da çalışır).
 - Doğru bilene 10 puan, ipucu kullanılırsa 5 puan. Pas geçilirse puan yok.
+- Her kelimenin bir kategorisi var (Yiyecek, Hayvan, Doğa...) ve tur başında gösterilir.
+- Kurulumda 5, 10, 15 tur veya sınırsız seçilebilir. Son tur bitince sonuç ekranı açılır.
 - Her turdan sonra sıra diğer oyuncuya geçer.
 - Türkçe karakter yazmadan da tahmin edebilirsiniz (ör. `cicek` = `çiçek`).
 

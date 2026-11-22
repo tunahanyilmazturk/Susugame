@@ -1,17 +1,18 @@
 // Oyun kuralları. DOM bilmez; yalnızca durumu (state) değiştirir.
-// Her fonksiyon aynı state nesnesini döndürür veya sonuç bilgisi verir.
 import { WORDS } from "./words.js";
-import { POINTS, DEFAULT_NAMES } from "./config.js";
+import { POINTS, DEFAULT_NAMES, DEFAULT_ROUNDS } from "./config.js";
 import { normalize, scramble, shuffle } from "./utils.js";
 
 /**
  * @param {string[]} names  Oyuncu isimleri (boş olanlara varsayılan atanır)
- * @param {{ words?: string[], rng?: () => number }} [options]
+ * @param {{ words?: {word: string, category: string}[], rng?: () => number, totalRounds?: number }} [options]
+ *   totalRounds: 0 ise sınırsız
  */
 export function createGame(names = DEFAULT_NAMES, options = {}) {
   return {
     words: options.words ?? WORDS,
     rng: options.rng ?? Math.random,
+    totalRounds: options.totalRounds ?? DEFAULT_ROUNDS,
     players: names.map((name, i) => ({
       name: (name || "").trim() || DEFAULT_NAMES[i] || `Oyuncu ${i + 1}`,
       score: 0,
@@ -23,7 +24,7 @@ export function createGame(names = DEFAULT_NAMES, options = {}) {
   };
 }
 
-function nextWord(game) {
+function nextEntry(game) {
   if (game.pool.length === 0) game.pool = shuffle(game.words, game.rng);
   return game.pool.pop();
 }
@@ -34,9 +35,10 @@ function nextTurn(game) {
 
 /** Yeni tur başlatır. */
 export function startRound(game) {
-  const word = nextWord(game);
+  const { word, category } = nextEntry(game);
   game.round = {
     word,
+    category,
     scrambled: scramble(word, game.rng),
     hinted: false,
     done: false,
@@ -45,6 +47,11 @@ export function startRound(game) {
   };
   game.roundCount++;
   return game;
+}
+
+/** Oyun bitti mi? Sınırsız modda hiç bitmez. */
+export function isFinished(game) {
+  return game.totalRounds > 0 && game.roundCount >= game.totalRounds && !!game.round?.done;
 }
 
 /** Harfleri ücretsiz yeniden karıştırır. */
@@ -96,5 +103,5 @@ export function summary(game) {
   const sorted = [...game.players].sort((a, b) => b.score - a.score);
   const top = sorted[0];
   const tied = sorted.length > 1 && sorted[1].score === top.score;
-  return { players: game.players, winner: tied ? null : top };
+  return { players: game.players, winner: tied ? null : top, rounds: game.roundCount };
 }
