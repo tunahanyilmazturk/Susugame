@@ -173,6 +173,7 @@
     </div>
 
     <div class="actions" id="actions">
+      <button id="shuffleBtn">🔀 Karıştır</button>
       <button id="hintBtn">💡 İpucu (-5)</button>
       <button id="passBtn">⏭ Pas</button>
     </div>
@@ -206,7 +207,9 @@
     "dağ", "nehir", "göl", "şehir", "köprü", "hastane", "eczane", "kütüphane", "doktor", "mühendis",
     "gökyüzü", "yıldız", "sevgi", "mutlu", "gülümseme", "kalp", "öpücük", "tatil", "sahil", "balık",
     "gece", "hediye", "çikolata", "sevgili", "romantik", "akşam", "yemek", "tatlı", "güzel", "bisiklet",
-    "pasta", "mum", "kahkaha", "yolculuk", "macera", "hayal", "rüya", "ışık", "sürpriz", "anı"
+    "pasta", "mum", "kahkaha", "yolculuk", "macera", "hayal", "rüya", "ışık", "sürpriz", "anı",
+    "hazine", "kumsal", "fırtına", "şelale", "kelebek", "papatya", "gülücük", "bahar", "kış", "sonbahar",
+    "hikaye", "şiir", "kahvaltı", "bulmaca", "kurabiye", "limonata", "maceraperest", "kırmızı", "mavi", "yıldönümü"
   ];
 
   // ---- Yardımcılar ----
@@ -283,7 +286,7 @@
       box.querySelector(".p").textContent = players[i].score;
       box.classList.toggle("turn", i === turn);
     });
-    el.roundInfo.textContent = `Tur ${roundCount} · Sıra: ${players[turn].name}`;
+    el.roundInfo.textContent = `Tur ${roundCount} · ${[...round.word].length} harfli · Sıra: ${players[turn].name}`;
 
     // Harfler
     el.tiles.innerHTML = "";
@@ -309,6 +312,17 @@
     el.actions.classList.toggle("hidden", round.done);
     el.nextRow.classList.toggle("hidden", !round.done);
     el.hintBtn.disabled = round.hinted;
+  }
+
+  // Harfleri yeniden karıştırır (ücretsiz)
+  function reshuffle() {
+    if (!round || round.done) return;
+    let out = round.scrambled;
+    for (let i = 0; i < 30 && out === round.word; i++) {
+      out = shuffle([...round.word]).join("");
+    }
+    round.scrambled = out;
+    render();
   }
 
   function awardTurn(points) {
@@ -379,6 +393,7 @@
   el.guess.addEventListener("keydown", (e) => { if (e.key === "Enter") checkGuess(); });
   el.hintBtn.addEventListener("click", hint);
   el.passBtn.addEventListener("click", pass);
+  $("shuffleBtn").addEventListener("click", reshuffle);
   el.nextBtn.addEventListener("click", newRound);
   el.endBtn.addEventListener("click", endGame);
   $("restartBtn").addEventListener("click", () => {
