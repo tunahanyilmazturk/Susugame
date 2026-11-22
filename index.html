@@ -185,6 +185,13 @@
     </div>
   </section>
 
+  <!-- Oyun sonu paneli -->
+  <section id="endPanel" class="hidden">
+    <h1>🏁 Oyun bitti</h1>
+    <p class="sub" id="finalText"></p>
+    <button class="primary" id="restartBtn">Yeni oyun</button>
+  </section>
+
 </div>
 
 <script>
@@ -350,11 +357,9 @@
     let result;
     if (a.score === b.score) result = "Berabere!";
     else result = (a.score > b.score ? a.name : b.name) + " kazandı!";
-    const ok = confirm(`Oyun bitti.\n${a.name}: ${a.score}\n${b.name}: ${b.score}\n\n${result}\n\nYeni oyuna dönmek ister misiniz?`);
-    if (ok) {
-      el.game.classList.add("hidden");
-      el.setup.classList.remove("hidden");
-    }
+    $("finalText").textContent = `${a.name}: ${a.score}  ·  ${b.name}: ${b.score}  —  ${result}`;
+    el.game.classList.add("hidden");
+    $("endPanel").classList.remove("hidden");
   }
 
   // ---- Olaylar ----
@@ -376,6 +381,10 @@
   el.passBtn.addEventListener("click", pass);
   el.nextBtn.addEventListener("click", newRound);
   el.endBtn.addEventListener("click", endGame);
+  $("restartBtn").addEventListener("click", () => {
+    $("endPanel").classList.add("hidden");
+    el.setup.classList.remove("hidden");
+  });
 })();
 </script>
 </body>
