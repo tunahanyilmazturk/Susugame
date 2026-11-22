@@ -1,0 +1,100 @@
+// Oyun kuralları. DOM bilmez; yalnızca durumu (state) değiştirir.
+// Her fonksiyon aynı state nesnesini döndürür veya sonuç bilgisi verir.
+import { WORDS } from "./words.js";
+import { POINTS, DEFAULT_NAMES } from "./config.js";
+import { normalize, scramble, shuffle } from "./utils.js";
+
+/**
+ * @param {string[]} names  Oyuncu isimleri (boş olanlara varsayılan atanır)
+ * @param {{ words?: string[], rng?: () => number }} [options]
+ */
+export function createGame(names = DEFAULT_NAMES, options = {}) {
+  return {
+    words: options.words ?? WORDS,
+    rng: options.rng ?? Math.random,
+    players: names.map((name, i) => ({
+      name: (name || "").trim() || DEFAULT_NAMES[i] || `Oyuncu ${i + 1}`,
+      score: 0,
+    })),
+    turn: 0,
+    roundCount: 0,
+    round: null,
+    pool: [],
+  };
+}
+
+function nextWord(game) {
+  if (game.pool.length === 0) game.pool = shuffle(game.words, game.rng);
+  return game.pool.pop();
+}
+
+function nextTurn(game) {
+  game.turn = (game.turn + 1) % game.players.length;
+}
+
+/** Yeni tur başlatır. */
+export function startRound(game) {
+  const word = nextWord(game);
+  game.round = {
+    word,
+    scrambled: scramble(word, game.rng),
+    hinted: false,
+    done: false,
+    result: null, // "solved" | "passed"
+    solvedBy: null,
+  };
+  game.roundCount++;
+  return game;
+}
+
+/** Harfleri ücretsiz yeniden karıştırır. */
+export function reshuffle(game) {
+  const r = game.round;
+  if (!r || r.done) return game;
+  r.scrambled = scramble(r.word, game.rng);
+  return game;
+}
+
+/** İlk harfi gösterir. Turda bir kez kullanılabilir. */
+export function useHint(game) {
+  const r = game.round;
+  if (!r || r.done || r.hinted) return game;
+  r.hinted = true;
+  return game;
+}
+
+/**
+ * Tahmini değerlendirir. Doğruysa puanı verir ve sırayı değiştirir.
+ * @returns {{ correct: boolean, ignored?: boolean, points?: number }}
+ */
+export function guess(game, value) {
+  const r = game.round;
+  if (!r || r.done || !value.trim()) return { correct: false, ignored: true };
+  if (normalize(value) !== normalize(r.word)) return { correct: false };
+
+  const points = r.hinted ? POINTS.hinted : POINTS.correct;
+  game.players[game.turn].score += points;
+  r.done = true;
+  r.result = "solved";
+  r.solvedBy = game.turn;
+  nextTurn(game);
+  return { correct: true, points };
+}
+
+/** Turu pas geçer: puan verilmez, sıra değişir. */
+export function pass(game) {
+  const r = game.round;
+  if (!r || r.done) return game;
+  r.done = true;
+  r.result = "passed";
+  nextTurn(game);
+  return game;
+}
+
+/** Oyun sonu özeti. Eşitlikte winner null olur. */
+export function summary(game) {
+  const sorted = [...game.players].sort((a, b) => b.score - a.score);
+  const top = sorted[0];
+  const tied = sorted.length > 1 && sorted[1].score === top.score;
+  return { players: game.players, winner: tied ? null : top };
+}

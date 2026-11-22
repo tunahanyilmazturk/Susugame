@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Karışık Kelimeler</title>
+<style>
+/* ---- Renk tokenları ---- */
+:root {
+  --bg: #fff5f8;
+  --card: #ffffff;
+  --ink: #2d2233;
+  --muted: #7a6b80;
+  --accent: #e0457b;
+  --accent-ink: #ffffff;
+  --ok: #2e9e6a;
+  --bad: #d64545;
+  --tile: #ffe3ec;
+  --tile-ink: #8a1f4b;
+  --line: #f0d9e3;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1d1724;
+    --card: #2a2233;
+    --ink: #f6eefa;
+    --muted: #b3a4bd;
+    --accent: #ff6d9a;
+    --accent-ink: #1d1724;
+    --ok: #5fd29a;
+    --bad: #ff7676;
+    --tile: #3b2f47;
+    --tile-ink: #ffd6e6;
+    --line: #3d3250;
+  }
+}
+
+/* ---- Temel ---- */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.card {
+  width: 100%;
+  max-width: 520px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+h1 { margin: 0 0 4px; font-size: 1.6rem; text-align: center; }
+.sub { margin: 0 0 20px; text-align: center; color: var(--muted); font-size: 0.95rem; }
+.hidden { display: none !important; }
+label { display: block; font-size: 0.9rem; color: var(--muted); margin: 12px 0 6px; }
+input[type="text"], input.name {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1.05rem;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--ink);
+  outline: none;
+}
+input:focus { border-color: var(--accent); }
+button {
+  font: inherit;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  background: var(--line);
+  color: var(--ink);
+  font-weight: 600;
+}
+button:disabled { opacity: 0.45; cursor: default; }
+button.primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  width: 100%;
+  margin-top: 18px;
+  font-size: 1.05rem;
+}
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* ---- Skorlar ---- */
+.scores { display: flex; gap: 10px; }
+.score {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  padding: 10px;
+  border-radius: 14px;
+  border: 2px solid var(--line);
+}
+.score.turn { border-color: var(--accent); }
+.score .n { font-size: 0.85rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.score .p { font-size: 1.6rem; font-weight: 700; }
+
+/* ---- Tur ---- */
+.round-info { text-align: center; margin: 18px 0 6px; color: var(--muted); font-size: 0.95rem; }
+.tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  min-height: 64px;
+  margin: 10px 0 14px;
+}
+.tile {
+  width: 48px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  border-radius: 12px;
+  background: var(--tile);
+  color: var(--tile-ink);
+  animation: pop 0.3s ease both;
+}
+.tile.reveal { background: var(--ok); color: #fff; }
+.tile.hint { background: transparent; border: 2px dashed var(--accent); color: var(--accent); }
+@keyframes pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.msg { min-height: 24px; text-align: center; font-weight: 600; margin: 6px 0 4px; }
+.msg.ok { color: var(--ok); }
+.msg.bad { color: var(--bad); }
+.msg.info { color: var(--muted); font-weight: 500; }
+
+.shake { animation: shake 0.4s; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+/* ---- Girdi ve eylemler ---- */
+.guess-row { display: flex; gap: 8px; margin-top: 8px; }
+.guess-row input { flex: 1; min-width: 0; text-align: center; }
+.guess-row button { padding: 12px 20px; }
+.actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.actions button { flex: 1 1 0; }
+.footer-actions { margin-top: 18px; text-align: center; }
+.footer-actions button { background: transparent; color: var(--muted); font-weight: 500; font-size: 0.9rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tile, .shake { animation: none; }
+}
+</style>
+</head>
+<body>
+<div class="card" id="app">
+
+  <!-- Kurulum ekranı -->
+  <section id="setup">
+    <h1>🔤 Karışık Kelimeler</h1>
+    <p class="sub">Harfler karıştırılır, doğrusunu birlikte bulmaya çalışın!</p>
+    <label for="p1">1. oyuncu</label>
+    <input class="name" id="p1" maxlength="16" value="Oyuncu 1">
+    <label for="p2">2. oyuncu</label>
+    <input class="name" id="p2" maxlength="16" value="Oyuncu 2">
+    <button class="primary" id="startBtn">Oyuna Başla</button>
+  </section>
+
+  <!-- Oyun ekranı -->
+  <section id="game" class="hidden">
+    <div class="scores" id="scores"></div>
+    <div class="round-info" id="roundInfo"></div>
+    <div class="tiles" id="tiles"></div>
+    <div class="msg" id="msg"></div>
+
+    <div class="guess-row" id="guessRow">
+      <input type="text" id="guess" placeholder="Doğru kelimeyi yaz" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <button class="primary-small" id="guessBtn">Tahmin</button>
+    </div>
+
+    <div class="actions" id="actions">
+      <button id="shuffleBtn">🔀 Karıştır</button>
+      <button id="hintBtn">💡 İpucu (-5)</button>
+      <button id="passBtn">⏭ Pas</button>
+    </div>
+    <div class="actions hidden" id="nextRow">
+      <button class="primary" id="nextBtn">Sonraki Kelime ▶</button>
+    </div>
+
+    <div class="footer-actions">
+      <button id="endBtn">Oyunu bitir</button>
+    </div>
+  </section>
+
+  <!-- Oyun sonu paneli -->
+  <section id="endPanel" class="hidden">
+    <h1>🏁 Oyun bitti</h1>
+    <p class="sub" id="finalText"></p>
+    <button class="primary" id="restartBtn">Yeni oyun</button>
+  </section>
+
+</div>
+<script>
+(()=>{var B=["elma","kalem","masa","kitap","g\xFCne\u015F","deniz","\xE7i\xE7ek","bah\xE7e","okul","\xF6\u011Fretmen","telefon","bilgisayar","televizyon","pencere","kap\u0131","sandalye","araba","u\xE7ak","gemi","tren","otob\xFCs","a\u011Fa\xE7","ya\u011Fmur","bulut","ayakkab\u0131","\xE7anta","\u015Femsiye","g\xF6zl\xFCk","buzdolab\u0131","kahve","\xE7ay","s\xFCt","ekmek","peynir","zeytin","portakal","karpuz","\xFCz\xFCm","\xE7ilek","kiraz","\u015Fark\u0131","dans","resim","m\xFCzik","gitar","piyano","tiyatro","sinema","havuz","orman","da\u011F","nehir","g\xF6l","\u015Fehir","k\xF6pr\xFC","hastane","eczane","k\xFCt\xFCphane","doktor","m\xFChendis","g\xF6ky\xFCz\xFC","y\u0131ld\u0131z","sevgi","mutlu","g\xFCl\xFCmseme","kalp","\xF6p\xFCc\xFCk","tatil","sahil","bal\u0131k","gece","hediye","\xE7ikolata","sevgili","romantik","ak\u015Fam","yemek","tatl\u0131","g\xFCzel","bisiklet","pasta","mum","kahkaha","yolculuk","macera","hayal","r\xFCya","\u0131\u015F\u0131k","s\xFCrpriz","an\u0131","hazine","kumsal","f\u0131rt\u0131na","\u015Felale","kelebek","papatya","g\xFCl\xFCc\xFCk","bahar","k\u0131\u015F","sonbahar","hikaye","\u015Fiir","kahvalt\u0131","bulmaca","kurabiye","limonata","maceraperest","k\u0131rm\u0131z\u0131","mavi","y\u0131ld\xF6n\xFCm\xFC"];var h={correct:10,hinted:5},E=h.correct-h.hinted,b=30,y=["Oyuncu 1","Oyuncu 2"];var P={\u00E7:"c",\u011F:"g",\u0131:"i",i:"i",\u00F6:"o",\u015F:"s",\u00FC:"u",\u00E2:"a",\u00EE:"i",\u00FB:"u"};function x(e){return e.toLocaleLowerCase("tr-TR").trim().replace(/[çğıöşüâîû]/g,t=>P[t])}function k(e){return e.toLocaleUpperCase("tr-TR")}function g(e,t=Math.random){let n=e.slice();for(let a=n.length-1;a>0;a--){let l=Math.floor(t()*(a+1));[n[a],n[l]]=[n[l],n[a]]}return n}function v(e,t=Math.random){let n=[...e],a=e;for(let l=0;l<b&&a===e;l++)a=g(n,t).join("");return a}function w(e=y,t={}){var n,a;return{words:(n=t.words)!=null?n:B,rng:(a=t.rng)!=null?a:Math.random,players:e.map((l,f)=>({name:(l||"").trim()||y[f]||`Oyuncu ${f+1}`,score:0})),turn:0,roundCount:0,round:null,pool:[]}}function _(e){return e.pool.length===0&&(e.pool=g(e.words,e.rng)),e.pool.pop()}function z(e){e.turn=(e.turn+1)%e.players.length}function T(e){let t=_(e);return e.round={word:t,scrambled:v(t,e.rng),hinted:!1,done:!1,result:null,solvedBy:null},e.roundCount++,e}function N(e){let t=e.round;return!t||t.done||(t.scrambled=v(t.word,e.rng)),e}function M(e){let t=e.round;return!t||t.done||t.hinted||(t.hinted=!0),e}function C(e,t){let n=e.round;if(!n||n.done||!t.trim())return{correct:!1,ignored:!0};if(x(t)!==x(n.word))return{correct:!1};let a=n.hinted?h.hinted:h.correct;return e.players[e.turn].score+=a,n.done=!0,n.result="solved",n.solvedBy=e.turn,z(e),{correct:!0,points:a}}function R(e){let t=e.round;return!t||t.done||(t.done=!0,t.result="passed",z(e)),e}function S(e){let t=[...e.players].sort((l,f)=>f.score-l.score),n=t[0],a=t.length>1&&t[1].score===n.score;return{players:e.players,winner:a?null:n}}var s=e=>document.getElementById(e);function $(){let e={app:s("app"),setup:s("setup"),game:s("game"),endPanel:s("endPanel"),p1:s("p1"),p2:s("p2"),startBtn:s("startBtn"),scores:s("scores"),roundInfo:s("roundInfo"),tiles:s("tiles"),msg:s("msg"),guess:s("guess"),guessBtn:s("guessBtn"),guessRow:s("guessRow"),actions:s("actions"),shuffleBtn:s("shuffleBtn"),hintBtn:s("hintBtn"),passBtn:s("passBtn"),nextRow:s("nextRow"),nextBtn:s("nextBtn"),endBtn:s("endBtn"),restartBtn:s("restartBtn"),finalText:s("finalText")};function t(o,u="info"){e.msg.textContent=o,e.msg.className="msg "+u}function n(){e.app.classList.remove("shake"),e.app.offsetWidth,e.app.classList.add("shake")}function a(o){e.scores.innerHTML="",o.players.forEach((u,d)=>{let c=document.createElement("div");c.className="score"+(d===o.turn?" turn":""),c.innerHTML='<div class="n"></div><div class="p"></div>',c.querySelector(".n").textContent=u.name,c.querySelector(".p").textContent=u.score,e.scores.appendChild(c)})}function l(o){if(e.tiles.innerHTML="",o.hinted&&!o.done){let d=document.createElement("div");d.className="tile hint",d.title=`\u0130pucu (-${E} puan)`,d.textContent=k(o.word[0]),e.tiles.appendChild(d)}[...o.done?o.word:o.scrambled].forEach((d,c)=>{let m=document.createElement("div");m.className="tile"+(o.done?" reveal":""),m.style.animationDelay=c*40+"ms",m.textContent=k(d),e.tiles.appendChild(m)})}function f(o){let u=o.round;a(o),e.roundInfo.textContent=`Tur ${o.roundCount} \xB7 ${[...u.word].length} harfli \xB7 S\u0131ra: ${o.players[o.turn].name}`,l(u),e.guessRow.classList.toggle("hidden",u.done),e.actions.classList.toggle("hidden",u.done),e.nextRow.classList.toggle("hidden",!u.done),e.hintBtn.disabled=u.hinted}function D(){e.game.classList.add("hidden"),e.endPanel.classList.add("hidden"),e.setup.classList.remove("hidden")}function H(){e.setup.classList.add("hidden"),e.endPanel.classList.add("hidden"),e.game.classList.remove("hidden")}function O(o){let{players:u,winner:d}=S(o),c=u.map(L=>`${L.name}: ${L.score}`).join("  \xB7  "),m=d?`${d.name} kazand\u0131!`:"Berabere!";e.finalText.textContent=`${c}  \u2014  ${m}`,e.game.classList.add("hidden"),e.endPanel.classList.remove("hidden")}return{el:e,setMessage:t,shake:n,render:f,showSetup:D,showGame:H,showEnd:O,readNames:()=>[e.p1.value,e.p2.value],readGuess:()=>e.guess.value,clearGuess:()=>{e.guess.value="",e.guess.focus()},selectGuess:()=>e.guess.select(),focusNext:()=>e.nextBtn.focus()}}var r=$(),{el:p}=r,i=null;function G(){T(i),r.setMessage("Ne buldunuz? Tahmininizi yaz\u0131n.","info"),r.clearGuess(),r.render(i)}function A(){i=w(r.readNames()),r.showGame(),G()}function I(){let e=C(i,r.readGuess());e.ignored||(e.correct?(r.setMessage(`\u{1F389} Do\u011Fru! +${e.points} puan`,"ok"),r.render(i),r.focusNext()):(r.setMessage("\u274C Olmad\u0131, tekrar deneyin!","bad"),r.shake(),r.selectGuess()))}function F(){!i.round||i.round.done||i.round.hinted||(M(i),r.setMessage("\u0130pucu verildi. Do\u011Fru bulursan\u0131z daha az puan al\u0131rs\u0131n\u0131z.","info"),r.render(i))}function U(){!i.round||i.round.done||(R(i),r.setMessage(`Cevap: ${k(i.round.word)}`,"info"),r.render(i),r.focusNext())}function W(){N(i),r.render(i)}p.startBtn.addEventListener("click",A);p.guessBtn.addEventListener("click",I);p.guess.addEventListener("keydown",e=>{e.key==="Enter"&&I()});p.hintBtn.addEventListener("click",F);p.passBtn.addEventListener("click",U);p.shuffleBtn.addEventListener("click",W);p.nextBtn.addEventListener("click",G);p.endBtn.addEventListener("click",()=>r.showEnd(i));p.restartBtn.addEventListener("click",r.showSetup);})();
+</script>
+</body>
+</html>

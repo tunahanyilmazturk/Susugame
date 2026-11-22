@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Karışık Kelimeler</title>
+<!-- @CSS -->
+</head>
+<body>
+<div class="card" id="app">
+
+  <!-- Kurulum ekranı -->
+  <section id="setup">
+    <h1>🔤 Karışık Kelimeler</h1>
+    <p class="sub">Harfler karıştırılır, doğrusunu birlikte bulmaya çalışın!</p>
+    <label for="p1">1. oyuncu</label>
+    <input class="name" id="p1" maxlength="16" value="Oyuncu 1">
+    <label for="p2">2. oyuncu</label>
+    <input class="name" id="p2" maxlength="16" value="Oyuncu 2">
+    <button class="primary" id="startBtn">Oyuna Başla</button>
+  </section>
+
+  <!-- Oyun ekranı -->
+  <section id="game" class="hidden">
+    <div class="scores" id="scores"></div>
+    <div class="round-info" id="roundInfo"></div>
+    <div class="tiles" id="tiles"></div>
+    <div class="msg" id="msg"></div>
+
+    <div class="guess-row" id="guessRow">
+      <input type="text" id="guess" placeholder="Doğru kelimeyi yaz" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <button class="primary-small" id="guessBtn">Tahmin</button>
+    </div>
+
+    <div class="actions" id="actions">
+      <button id="shuffleBtn">🔀 Karıştır</button>
+      <button id="hintBtn">💡 İpucu (-5)</button>
+      <button id="passBtn">⏭ Pas</button>
+    </div>
+    <div class="actions hidden" id="nextRow">
+      <button class="primary" id="nextBtn">Sonraki Kelime ▶</button>
+    </div>
+
+    <div class="footer-actions">
+      <button id="endBtn">Oyunu bitir</button>
+    </div>
+  </section>
+
+  <!-- Oyun sonu paneli -->
+  <section id="endPanel" class="hidden">
+    <h1>🏁 Oyun bitti</h1>
+    <p class="sub" id="finalText"></p>
+    <button class="primary" id="restartBtn">Yeni oyun</button>
+  </section>
+
+</div>
+<!-- @JS -->
+</body>
+</html>
