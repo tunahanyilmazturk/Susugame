@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Karışık Kelimeler</title>
+<style>
+  :root {
+    --bg: #fff5f8;
+    --card: #ffffff;
+    --ink: #2d2233;
+    --muted: #7a6b80;
+    --accent: #e0457b;
+    --accent-ink: #ffffff;
+    --ok: #2e9e6a;
+    --bad: #d64545;
+    --tile: #ffe3ec;
+    --tile-ink: #8a1f4b;
+    --line: #f0d9e3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1d1724;
+      --card: #2a2233;
+      --ink: #f6eefa;
+      --muted: #b3a4bd;
+      --accent: #ff6d9a;
+      --accent-ink: #1d1724;
+      --ok: #5fd29a;
+      --bad: #ff7676;
+      --tile: #3b2f47;
+      --tile-ink: #ffd6e6;
+      --line: #3d3250;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .card {
+    width: 100%;
+    max-width: 520px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  }
+  h1 { margin: 0 0 4px; font-size: 1.6rem; text-align: center; }
+  .sub { margin: 0 0 20px; text-align: center; color: var(--muted); font-size: 0.95rem; }
+  .hidden { display: none !important; }
+  label { display: block; font-size: 0.9rem; color: var(--muted); margin: 12px 0 6px; }
+  input[type="text"], input.name {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 1.05rem;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--ink);
+    outline: none;
+  }
+  input:focus { border-color: var(--accent); }
+  button {
+    font: inherit;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    background: var(--line);
+    color: var(--ink);
+    font-weight: 600;
+  }
+  button:disabled { opacity: 0.45; cursor: default; }
+  button.primary { background: var(--accent); color: var(--accent-ink); width: 100%; margin-top: 18px; font-size: 1.05rem; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+  .row button { flex: 1 1 0; min-width: 100px; }
+
+  .scores { display: flex; gap: 10px; }
+  .score {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-radius: 14px;
+    border: 2px solid var(--line);
+  }
+  .score.turn { border-color: var(--accent); }
+  .score .n { font-size: 0.85rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .score .p { font-size: 1.6rem; font-weight: 700; }
+
+  .round-info { text-align: center; margin: 18px 0 6px; color: var(--muted); font-size: 0.95rem; }
+  .tiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    min-height: 64px;
+    margin: 10px 0 14px;
+  }
+  .tile {
+    width: 48px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    border-radius: 12px;
+    background: var(--tile);
+    color: var(--tile-ink);
+    animation: pop 0.3s ease both;
+  }
+  .tile.reveal { background: var(--ok); color: #fff; }
+  .tile.hint { background: transparent; border: 2px dashed var(--accent); color: var(--accent); }
+  @keyframes pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .msg { min-height: 24px; text-align: center; font-weight: 600; margin: 6px 0 4px; }
+  .msg.ok { color: var(--ok); }
+  .msg.bad { color: var(--bad); }
+  .msg.info { color: var(--muted); font-weight: 500; }
+
+  .shake { animation: shake 0.4s; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+  }
+
+  .guess-row { display: flex; gap: 8px; margin-top: 8px; }
+  .guess-row input { flex: 1; text-align: center; text-transform: none; }
+  .guess-row button { padding: 12px 20px; }
+  .actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .actions button { flex: 1 1 0; }
+  .footer-actions { margin-top: 18px; text-align: center; }
+  .footer-actions button { background: transparent; color: var(--muted); font-weight: 500; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<div class="card" id="app">
+
+  <!-- Kurulum ekranı -->
+  <section id="setup">
+    <h1>🔤 Karışık Kelimeler</h1>
+    <p class="sub">Harfler karıştırılır, doğrusunu birlikte bulmaya çalışın!</p>
+    <label for="p1">1. oyuncu</label>
+    <input class="name" id="p1" maxlength="16" value="Oyuncu 1">
+    <label for="p2">2. oyuncu</label>
+    <input class="name" id="p2" maxlength="16" value="Oyuncu 2">
+    <button class="primary" id="startBtn">Oyuna Başla</button>
+  </section>
+
+  <!-- Oyun ekranı -->
+  <section id="game" class="hidden">
+    <div class="scores">
+      <div class="score" id="score0"><div class="n"></div><div class="p">0</div></div>
+      <div class="score" id="score1"><div class="n"></div><div class="p">0</div></div>
+    </div>
+    <div class="round-info" id="roundInfo"></div>
+    <div class="tiles" id="tiles"></div>
+    <div class="msg" id="msg"></div>
+
+    <div class="guess-row" id="guessRow">
+      <input type="text" id="guess" placeholder="Doğru kelimeyi yaz" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <button class="primary-small" id="guessBtn">Tahmin</button>
+    </div>
+
+    <div class="actions" id="actions">
+      <button id="hintBtn">💡 İpucu (-5)</button>
+      <button id="passBtn">⏭ Pas</button>
+    </div>
+    <div class="actions hidden" id="nextRow">
+      <button class="primary" id="nextBtn" style="margin-top:0">Sonraki Kelime ▶</button>
+    </div>
+
+    <div class="footer-actions">
+      <button id="endBtn">Oyunu bitir</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  // ---- Kelime listesi (Türkçe, yazılışı doğru) ----
+  const WORDS = [
+    "elma", "kalem", "masa", "kitap", "güneş", "deniz", "çiçek", "bahçe", "okul", "öğretmen",
+    "telefon", "bilgisayar", "televizyon", "pencere", "kapı", "sandalye", "araba", "uçak", "gemi", "tren",
+    "otobüs", "ağaç", "yağmur", "bulut", "ayakkabı", "çanta", "şemsiye", "gözlük", "buzdolabı", "kahve",
+    "çay", "süt", "ekmek", "peynir", "zeytin", "portakal", "karpuz", "üzüm", "çilek", "kiraz",
+    "şarkı", "dans", "resim", "müzik", "gitar", "piyano", "tiyatro", "sinema", "havuz", "orman",
+    "dağ", "nehir", "göl", "şehir", "köprü", "hastane", "eczane", "kütüphane", "doktor", "mühendis",
+    "gökyüzü", "yıldız", "sevgi", "mutlu", "gülümseme", "kalp", "öpücük", "tatil", "sahil", "balık",
+    "gece", "hediye", "çikolata", "sevgili", "romantik", "akşam", "yemek", "tatlı", "güzel", "bisiklet",
+    "pasta", "mum", "kahkaha", "yolculuk", "macera", "hayal", "rüya", "ışık", "sürpriz", "anı"
+  ];
+
+  // ---- Yardımcılar ----
+  const TR_FOLD = { ç: "c", ğ: "g", ı: "i", i: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i", û: "u" };
+
+  // Büyük/küçük harf ve Türkçe karakterleri (ç, ş, ğ...) yazmadan da kabul et
+  function norm(s) {
+    return s.toLocaleLowerCase("tr-TR").trim().replace(/[çğıöşüâîû]/g, (c) => TR_FOLD[c]);
+  }
+  function upper(s) {
+    return s.toLocaleUpperCase("tr-TR");
+  }
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  // Karıştırılmış kelime, asıl kelimeyle aynı olmasın
+  function scramble(word) {
+    const letters = [...word];
+    let out = word;
+    for (let i = 0; i < 30 && out === word; i++) {
+      out = shuffle(letters).join("");
+    }
+    return out;
+  }
+
+  // ---- Durum ----
+  let players = [];
+  let turn = 0;
+  let round = null; // { word, scrambled, hinted, done }
+  let pool = [];
+  let roundCount = 0;
+
+  const $ = (id) => document.getElementById(id);
+  const el = {
+    setup: $("setup"), game: $("game"),
+    p1: $("p1"), p2: $("p2"), startBtn: $("startBtn"),
+    score0: $("score0"), score1: $("score1"),
+    roundInfo: $("roundInfo"), tiles: $("tiles"), msg: $("msg"),
+    guess: $("guess"), guessBtn: $("guessBtn"), guessRow: $("guessRow"),
+    actions: $("actions"), hintBtn: $("hintBtn"), passBtn: $("passBtn"),
+    nextRow: $("nextRow"), nextBtn: $("nextBtn"), endBtn: $("endBtn"),
+    app: $("app"),
+  };
+
+  function nextWord() {
+    if (pool.length === 0) pool = shuffle(WORDS);
+    return pool.pop();
+  }
+
+  function setMsg(text, cls) {
+    el.msg.textContent = text;
+    el.msg.className = "msg " + (cls || "");
+  }
+
+  function newRound() {
+    const word = nextWord();
+    round = { word, scrambled: scramble(word), hinted: false, done: false };
+    roundCount++;
+    setMsg("Ne buldunuz? Tahmininizi yazın.", "info");
+    el.guess.value = "";
+    render();
+    el.guess.focus();
+  }
+
+  function render() {
+    // Skorlar ve sıra
+    [el.score0, el.score1].forEach((box, i) => {
+      box.querySelector(".n").textContent = players[i].name;
+      box.querySelector(".p").textContent = players[i].score;
+      box.classList.toggle("turn", i === turn);
+    });
+    el.roundInfo.textContent = `Tur ${roundCount} · Sıra: ${players[turn].name}`;
+
+    // Harfler
+    el.tiles.innerHTML = "";
+    const shown = round.done ? round.word : round.scrambled;
+    [...shown].forEach((ch, i) => {
+      const t = document.createElement("div");
+      t.className = "tile";
+      t.style.animationDelay = i * 40 + "ms";
+      t.textContent = upper(ch);
+      if (round.done) t.classList.add("reveal");
+      el.tiles.appendChild(t);
+    });
+    if (round.hinted && !round.done) {
+      const h = document.createElement("div");
+      h.className = "tile hint";
+      h.textContent = upper(round.word[0]);
+      h.title = "İpucu";
+      el.tiles.prepend(h);
+    }
+
+    // Butonlar
+    el.guessRow.classList.toggle("hidden", round.done);
+    el.actions.classList.toggle("hidden", round.done);
+    el.nextRow.classList.toggle("hidden", !round.done);
+    el.hintBtn.disabled = round.hinted;
+  }
+
+  function awardTurn(points) {
+    players[turn].score += points;
+    turn = 1 - turn;
+  }
+
+  function checkGuess() {
+    if (!round || round.done) return;
+    const value = el.guess.value;
+    if (!value.trim()) return;
+    if (norm(value) === norm(round.word)) {
+      const pts = round.hinted ? 5 : 10;
+      awardTurn(pts);
+      round.done = true;
+      setMsg(`🎉 Doğru! +${pts} puan`, "ok");
+      render();
+      el.nextBtn.focus();
+    } else {
+      setMsg("❌ Olmadı, tekrar deneyin!", "bad");
+      el.app.classList.remove("shake");
+      void el.app.offsetWidth; // animasyonu yeniden başlat
+      el.app.classList.add("shake");
+      el.guess.select();
+    }
+  }
+
+  function hint() {
+    if (!round || round.done || round.hinted) return;
+    round.hinted = true;
+    setMsg(`İpucu verildi. Doğru bulursanız 5 puan.`, "info");
+    render();
+  }
+
+  function pass() {
+    if (!round || round.done) return;
+    round.done = true;
+    turn = 1 - turn; // pas geçilince sıra değişir, puan yok
+    setMsg(`Cevap: ${upper(round.word)}`, "info");
+    render();
+    el.nextBtn.focus();
+  }
+
+  function endGame() {
+    const [a, b] = players;
+    let result;
+    if (a.score === b.score) result = "Berabere!";
+    else result = (a.score > b.score ? a.name : b.name) + " kazandı!";
+    const ok = confirm(`Oyun bitti.\n${a.name}: ${a.score}\n${b.name}: ${b.score}\n\n${result}\n\nYeni oyuna dönmek ister misiniz?`);
+    if (ok) {
+      el.game.classList.add("hidden");
+      el.setup.classList.remove("hidden");
+    }
+  }
+
+  // ---- Olaylar ----
+  el.startBtn.addEventListener("click", () => {
+    const n1 = el.p1.value.trim() || "Oyuncu 1";
+    const n2 = el.p2.value.trim() || "Oyuncu 2";
+    players = [{ name: n1, score: 0 }, { name: n2, score: 0 }];
+    turn = 0;
+    roundCount = 0;
+    pool = [];
+    el.setup.classList.add("hidden");
+    el.game.classList.remove("hidden");
+    newRound();
+  });
+
+  el.guessBtn.addEventListener("click", checkGuess);
+  el.guess.addEventListener("keydown", (e) => { if (e.key === "Enter") checkGuess(); });
+  el.hintBtn.addEventListener("click", hint);
+  el.passBtn.addEventListener("click", pass);
+  el.nextBtn.addEventListener("click", newRound);
+  el.endBtn.addEventListener("click", endGame);
+})();
+</script>
+</body>
+</html>
