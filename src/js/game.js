@@ -1,16 +1,26 @@
 // Oyun kuralları. DOM bilmez; yalnızca durumu (state) değiştirir.
 import { WORDS } from "./words.js";
-import { POINTS, DEFAULT_NAMES, DEFAULT_ROUNDS } from "./config.js";
+import { POINTS, DEFAULT_NAMES, DEFAULT_ROUNDS, DEFAULT_LEVEL, LEVELS } from "./config.js";
 import { normalize, scramble, shuffle } from "./utils.js";
+
+/** Kelimeleri seçilen zorluk seviyesine göre süzer. */
+export function wordsForLevel(words, level = DEFAULT_LEVEL) {
+  const { min, max } = LEVELS[level] ?? LEVELS[DEFAULT_LEVEL];
+  return words.filter(({ word }) => {
+    const n = [...word].length;
+    return n >= min && n <= max;
+  });
+}
 
 /**
  * @param {string[]} names  Oyuncu isimleri (boş olanlara varsayılan atanır)
- * @param {{ words?: {word: string, category: string}[], rng?: () => number, totalRounds?: number }} [options]
- *   totalRounds: 0 ise sınırsız
+ * @param {{ words?: {word: string, category: string}[], rng?: () => number, totalRounds?: number, level?: string }} [options]
+ *   totalRounds: 0 ise sınırsız. level: "kolay" | "orta" | "zor" | "karma"
  */
 export function createGame(names = DEFAULT_NAMES, options = {}) {
   return {
-    words: options.words ?? WORDS,
+    words: wordsForLevel(options.words ?? WORDS, options.level),
+    level: options.level ?? DEFAULT_LEVEL,
     rng: options.rng ?? Math.random,
     totalRounds: options.totalRounds ?? DEFAULT_ROUNDS,
     players: names.map((name, i) => ({

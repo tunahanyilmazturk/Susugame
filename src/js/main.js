@@ -8,7 +8,7 @@ const { el } = ui;
 let game = null;
 
 function startGame() {
-  game = createGame(ui.readNames(), { totalRounds: ui.readRounds() });
+  game = createGame(ui.readNames(), { totalRounds: ui.readRounds(), level: ui.readLevel() });
   ui.showGame();
   newRound();
 }

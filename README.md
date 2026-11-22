@@ -8,6 +8,7 @@ Harfleri karıştırılmış Türkçe bir kelimenin doğrusunu iki oyuncu birlik
 - Doğru bilene 10 puan, ipucu kullanılırsa 5 puan. Pas geçilirse puan yok.
 - Her kelimenin bir kategorisi var (Yiyecek, Hayvan, Doğa...) ve tur başında gösterilir.
 - Kurulumda 5, 10, 15 tur veya sınırsız seçilebilir. Son tur bitince sonuç ekranı açılır.
+- Zorluk seviyesi harf sayısına göre belirlenir: Kolay (3–5), Orta (6–7), Zor (8+). "Karışık" hepsini karıştırır.
 - Her turdan sonra sıra diğer oyuncuya geçer.
 - Türkçe karakter yazmadan da tahmin edebilirsiniz (ör. `cicek` = `çiçek`).
 
@@ -19,7 +20,7 @@ src/
   css/styles.css    Tüm stiller; renkler :root içindeki tokenlar
   js/
     config.js       Puanlar, ipucu cezası, sabitler  ← kural ayarları burada
-    words.js        Kelime listesi                    ← yeni kelime burada
+    words.js        Kelime listesi (358 kelime)        ← yeni kelime burada
     utils.js        Saf yardımcılar (normalize, karıştırma)
     game.js         Oyun kuralları (DOM bilmez)
     ui.js           Ekran çizimi ve DOM erişimi

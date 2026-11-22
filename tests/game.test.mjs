@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { normalize, toDisplay, shuffle, scramble } from "../src/js/utils.js";
 import {
-  createGame, startRound, guess, pass, useHint, reshuffle, summary, isFinished,
+  createGame, startRound, guess, pass, useHint, reshuffle, summary, isFinished, wordsForLevel,
 } from "../src/js/game.js";
 import { POINTS } from "../src/js/config.js";
 import { WORDS, CATEGORIES } from "../src/js/words.js";
@@ -48,6 +48,30 @@ test("kelime listesi geçerli: küçük harf, boşluksuz, bilinen kategori, tekr
   }
   const words = WORDS.map((e) => e.word);
   assert.equal(new Set(words).size, words.length, "tekrar eden kelime var");
+});
+
+test("zorluk seviyeleri harf sayısına göre süzer", () => {
+  const sample = [
+    { word: "kuş", category: "Hayvan" },            // 3
+    { word: "kalemtıraş", category: "Eşya" },        // 9
+    { word: "kitap", category: "Eşya" },             // 5
+    { word: "telefon", category: "Eşya" },           // 7
+    { word: "bahçe", category: "Ev" },               // 5
+    { word: "gökkuşağı", category: "Doğa" },         // 9
+  ];
+  const lens = (level) => wordsForLevel(sample, level).map((e) => e.word);
+  assert.deepEqual(lens("kolay"), ["kuş", "kitap", "bahçe"]);
+  assert.deepEqual(lens("orta"), ["telefon"]);
+  assert.deepEqual(lens("zor"), ["kalemtıraş", "gökkuşağı"]);
+  assert.equal(lens("karma").length, sample.length);
+  assert.equal(wordsForLevel(sample, "bilinmeyen").length, sample.length, "bilinmeyen seviye karma sayılmalı");
+});
+
+test("her zorluk seviyesinde yeterince kelime var", () => {
+  for (const level of ["kolay", "orta", "zor", "karma"]) {
+    const n = wordsForLevel(WORDS, level).length;
+    assert.ok(n >= 30, `${level} seviyesinde yalnızca ${n} kelime var`);
+  }
 });
 
 test("createGame boş isme varsayılan atar ve tur sayısını alır", () => {

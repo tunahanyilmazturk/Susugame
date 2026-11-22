@@ -12,6 +12,16 @@ export const MAX_SHUFFLE_TRIES = 30;
 
 export const DEFAULT_NAMES = ["Oyuncu 1", "Oyuncu 2"];
 
+// Zorluk seviyeleri: kelimenin harf sayısına göre filtre (min ve max dahil).
+// "karma" tüm kelimeleri kullanır.
+export const LEVELS = {
+  kolay: { label: "Kolay", min: 0, max: 5 },
+  orta: { label: "Orta", min: 6, max: 7 },
+  zor: { label: "Zor", min: 8, max: Infinity },
+  karma: { label: "Karışık", min: 0, max: Infinity },
+};
+export const DEFAULT_LEVEL = "karma";
+
 // Kurulumda seçilebilecek tur sayıları. 0 = sınırsız.
 export const ROUND_OPTIONS = [5, 10, 15, 0];
 export const DEFAULT_ROUNDS = 10;
