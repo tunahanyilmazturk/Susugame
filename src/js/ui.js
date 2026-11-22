@@ -15,6 +15,10 @@ export function createUI() {
     p2: $("p2"),
     rounds: $("rounds"),
     level: $("level"),
+    timeSel: $("timeSel"),
+    timer: $("timer"),
+    timerText: $("timerText"),
+    timerBar: $("timerBar"),
     startBtn: $("startBtn"),
     scores: $("scores"),
     progress: $("progress"),
@@ -113,6 +117,8 @@ export function createUI() {
     el.category.textContent = `Kategori: ${round.category}`;
     renderTiles(round);
 
+    // Süre göstergesi yalnızca aktif turda ve süre açıksa görünür
+    if (!game.timeLimit || round.done) el.timer.classList.add("hidden");
     el.guessRow.classList.toggle("hidden", round.done);
     el.actions.classList.toggle("hidden", round.done);
     el.nextRow.classList.toggle("hidden", !round.done);
@@ -154,6 +160,28 @@ export function createUI() {
     readNames: () => [el.p1.value, el.p2.value],
     readRounds: () => Number(el.rounds.value),
     readLevel: () => el.level.value,
+    readTime: () => Number(el.timeSel.value),
+    // Kayıtlı ayarı yalnızca seçenek listesinde varsa uygular
+    applySettings: (s = {}) => {
+      const has = (sel, v) => [...sel.options].some((o) => o.value === String(v));
+      if (Array.isArray(s.names)) {
+        if (typeof s.names[0] === "string") el.p1.value = s.names[0].slice(0, 16);
+        if (typeof s.names[1] === "string") el.p2.value = s.names[1].slice(0, 16);
+      }
+      if (has(el.level, s.level)) el.level.value = s.level;
+      if (has(el.rounds, s.rounds)) el.rounds.value = String(s.rounds);
+      if (has(el.timeSel, s.time)) el.timeSel.value = String(s.time);
+    },
+    /** Süre göstergesini günceller. left null ise gizler. */
+    setTimer: (left, total) => {
+      if (left == null) return el.timer.classList.add("hidden");
+      el.timer.classList.remove("hidden");
+      const low = left <= 10;
+      el.timerText.textContent = `⏱ ${left} sn`;
+      el.timerText.classList.toggle("low", low);
+      el.timerBar.style.width = (left / total) * 100 + "%";
+      el.timerBar.classList.toggle("low", low);
+    },
     readGuess: () => el.guess.value,
     clearGuess: () => { el.guess.value = ""; el.guess.focus(); },
     selectGuess: () => el.guess.select(),

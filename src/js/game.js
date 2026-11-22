@@ -1,6 +1,6 @@
 // Oyun kuralları. DOM bilmez; yalnızca durumu (state) değiştirir.
 import { WORDS } from "./words.js";
-import { POINTS, DEFAULT_NAMES, DEFAULT_ROUNDS, DEFAULT_LEVEL, LEVELS } from "./config.js";
+import { POINTS, DEFAULT_NAMES, DEFAULT_ROUNDS, DEFAULT_LEVEL, DEFAULT_TIME, LEVELS } from "./config.js";
 import { normalize, scramble, shuffle } from "./utils.js";
 
 /** Kelimeleri seçilen zorluk seviyesine göre süzer. */
@@ -23,6 +23,7 @@ export function createGame(names = DEFAULT_NAMES, options = {}) {
     level: options.level ?? DEFAULT_LEVEL,
     rng: options.rng ?? Math.random,
     totalRounds: options.totalRounds ?? DEFAULT_ROUNDS,
+    timeLimit: options.timeLimit ?? DEFAULT_TIME, // saniye, 0 = süre yok
     players: names.map((name, i) => ({
       name: (name || "").trim() || DEFAULT_NAMES[i] || `Oyuncu ${i + 1}`,
       score: 0,
@@ -104,6 +105,16 @@ export function pass(game) {
   if (!r || r.done) return game;
   r.done = true;
   r.result = "passed";
+  nextTurn(game);
+  return game;
+}
+
+/** Süre dolunca turu kapatır: puan yok, sıra değişir (pas gibi). */
+export function timeUp(game) {
+  const r = game.round;
+  if (!r || r.done) return game;
+  r.done = true;
+  r.result = "timeout";
   nextTurn(game);
   return game;
 }

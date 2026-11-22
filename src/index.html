@@ -30,6 +30,12 @@
       <option value="zor">Zor (8+ harf)</option>
       <option value="karma" selected>Karışık</option>
     </select>
+    <label for="timeSel">Tur süresi</label>
+    <select id="timeSel">
+      <option value="0" selected>Süre yok</option>
+      <option value="30">30 saniye</option>
+      <option value="60">60 saniye</option>
+    </select>
     <label for="rounds">Tur sayısı</label>
     <select id="rounds">
       <option value="5">5 tur</option>
@@ -46,6 +52,10 @@
     <div class="progress" id="progress" aria-hidden="true"><span class="progress-bar" id="progressBar"></span></div>
     <div class="round-info" id="roundInfo"></div>
     <div class="category-row"><span class="category" id="category"></span></div>
+    <div class="timer hidden" id="timer">
+      <div class="timer-text" id="timerText"></div>
+      <div class="timer-track"><span class="timer-bar" id="timerBar"></span></div>
+    </div>
     <div class="tiles" id="tiles"></div>
     <div class="msg" id="msg" role="status" aria-live="polite"></div>
 

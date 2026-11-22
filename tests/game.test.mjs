@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { normalize, toDisplay, shuffle, scramble } from "../src/js/utils.js";
 import {
-  createGame, startRound, guess, pass, useHint, reshuffle, summary, isFinished, wordsForLevel,
+  createGame, startRound, guess, pass, useHint, reshuffle, summary, isFinished, wordsForLevel, timeUp,
 } from "../src/js/game.js";
 import { POINTS } from "../src/js/config.js";
 import { WORDS, CATEGORIES } from "../src/js/words.js";
@@ -163,6 +163,18 @@ test("isFinished: sonlu modda son tur bitince true, sınırsız modda hiç", () 
   const endless = createGame(["A", "B"], { words: list("elma"), rng: seeded(4), totalRounds: 0 });
   for (let i = 0; i < 5; i++) { startRound(endless); pass(endless); }
   assert.equal(isFinished(endless), false);
+});
+
+test("timeUp turu puansız kapatır ve sırayı değiştirir", () => {
+  const g = createGame(["A", "B"], { words: list("elma"), rng: seeded(2), timeLimit: 30 });
+  assert.equal(g.timeLimit, 30);
+  startRound(g);
+  timeUp(g);
+  assert.equal(g.round.result, "timeout");
+  assert.equal(g.players.every((p) => p.score === 0), true);
+  assert.equal(g.turn, 1);
+  timeUp(g); // bitmiş tur ikinci kez kapanmaz
+  assert.equal(g.turn, 1);
 });
 
 test("summary kazananı, eşitliği ve tur sayısını doğru bulur", () => {

@@ -50,3 +50,8 @@ Değişiklikten sonra `npm run build` çalıştırıp `dist/index.html` dosyası
 - **Puanı değiştirmek:** `src/js/config.js` içindeki `POINTS` değerlerini düzenleyin.
 - **Oyun kuralı eklemek:** `src/js/game.js` içine fonksiyon ekleyin, `main.js` ile bağlayın, testini `tests/` altına yazın.
 - **Görünüm:** `src/css/styles.css` içindeki renk tokenlarını değiştirin; koyu tema otomatik uygulanır.
+
+## Tur süresi ve ayarlar
+
+- Kurulumda "Tur süresi" seçilirse (30 veya 60 saniye) her turun süresi sayılır. Süre dolunca tur puansız kapanır ve sıra değişir.
+- Oyuncu adları, zorluk, tur sayısı ve süre tarayıcıda hatırlanır (`src/js/storage.js`). Tarayıcı depolaması kapalıysa ayarlar hatırlanmaz, oyun yine oynanır.

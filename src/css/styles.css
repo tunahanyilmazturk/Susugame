@@ -240,6 +240,33 @@ button.primary:active { transform: translateY(3px); box-shadow: 0 1px 0 color-mi
   color: var(--rose);
 }
 
+/* ---- Tur süresi ---- */
+.timer { max-width: 260px; margin: 12px auto 0; }
+.timer-text {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 6px;
+}
+.timer-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+.timer-bar {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  background: var(--sage);
+  transition: width 0.25s linear, background-color 0.3s ease;
+}
+.timer-bar.low { background: var(--bad); }
+.timer-text.low { color: var(--bad); }
+
 /* ---- Harf kartları ---- */
 .tiles {
   --tile-w: 48px; /* ui.js ekran genişliğine göre günceller */

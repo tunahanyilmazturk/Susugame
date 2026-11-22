@@ -22,6 +22,10 @@ export const LEVELS = {
 };
 export const DEFAULT_LEVEL = "karma";
 
+// Tur süresi seçenekleri (saniye). 0 = süre yok.
+export const TIME_OPTIONS = [0, 30, 60];
+export const DEFAULT_TIME = 0;
+
 // Kurulumda seçilebilecek tur sayıları. 0 = sınırsız.
 export const ROUND_OPTIONS = [5, 10, 15, 0];
 export const DEFAULT_ROUNDS = 10;
