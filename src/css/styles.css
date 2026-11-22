@@ -33,13 +33,20 @@
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh; /* mobil tarayıcı çubukları açıkken de tam yükseklik */
   background: var(--bg);
   color: var(--ink);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  -webkit-text-size-adjust: 100%;
+  /* Çentik ve alt çubuk payı; en az 16px kenar boşluğu */
+  padding:
+    max(16px, env(safe-area-inset-top, 0px))
+    max(16px, env(safe-area-inset-right, 0px))
+    max(16px, env(safe-area-inset-bottom, 0px))
+    max(16px, env(safe-area-inset-left, 0px));
 }
 .card {
   width: 100%;
@@ -71,6 +78,9 @@ button {
   border: none;
   border-radius: 12px;
   padding: 12px 16px;
+  min-height: 44px; /* Apple ve Google'ın önerdiği dokunma alanı */
+  touch-action: manipulation; /* çift dokunma zoom gecikmesini kaldırır */
+  -webkit-tap-highlight-color: transparent;
   cursor: pointer;
   background: var(--line);
   color: var(--ink);
@@ -112,20 +122,22 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   color: var(--ink);
 }
 .tiles {
+  --tile-w: 48px; /* ui.js ekran genişliğine göre günceller */
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   justify-content: center;
   min-height: 64px;
   margin: 10px 0 14px;
 }
 .tile {
-  width: 48px;
-  height: 56px;
+  width: var(--tile-w);
+  height: calc(var(--tile-w) * 1.17);
+  font-size: calc(var(--tile-w) * 0.5);
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
   font-weight: 700;
   border-radius: 12px;
   background: var(--tile);
@@ -152,10 +164,26 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .guess-row { display: flex; gap: 8px; margin-top: 8px; }
 .guess-row input { flex: 1; min-width: 0; text-align: center; }
 .guess-row button { padding: 12px 20px; }
-.actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-.actions button { flex: 1 1 0; }
+.actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+.actions button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 12px 6px; }
+.actions button small { font-size: 0.75rem; font-weight: 500; color: var(--muted); }
+.actions button:disabled small { color: inherit; }
 .footer-actions { margin-top: 18px; text-align: center; }
 .footer-actions button { background: transparent; color: var(--muted); font-weight: 500; font-size: 0.9rem; }
+
+/* Dar ekranlar (küçük telefonlar) */
+@media (max-width: 380px) {
+  .card { padding: 18px; border-radius: 16px; }
+  h1 { font-size: 1.35rem; }
+  .score .p { font-size: 1.3rem; }
+  .actions button { font-size: 0.9rem; }
+}
+
+/* Yatay telefon ve kısa ekranlarda kartın taşmasını önler */
+@media (max-height: 560px) {
+  body { align-items: flex-start; }
+  .card { margin: 0 auto; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .tile, .shake { animation: none; }

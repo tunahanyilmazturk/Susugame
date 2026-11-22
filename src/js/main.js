@@ -21,14 +21,21 @@ function newRound() {
   ui.render(game);
 }
 
+// Dokunsal geri bildirim. Desteklemeyen tarayıcılarda sessizce atlanır.
+function buzz(pattern) {
+  try { navigator.vibrate?.(pattern); } catch { /* desteklenmiyor */ }
+}
+
 function submitGuess() {
   const result = guess(game, ui.readGuess());
   if (result.ignored) return;
   if (result.correct) {
+    buzz([30, 40, 30]);
     ui.setMessage(`🎉 Doğru! +${result.points} puan`, "ok");
     ui.render(game);
     ui.focusNext();
   } else {
+    buzz(120);
     ui.setMessage("❌ Olmadı, tekrar deneyin!", "bad");
     ui.shake();
     ui.selectGuess();

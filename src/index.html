@@ -2,7 +2,12 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#e0457b" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1d1724" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kelimeler">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Karışık Kelimeler</title>
 <!-- @CSS -->
 </head>
@@ -36,13 +41,13 @@
     <div class="msg" id="msg" role="status" aria-live="polite"></div>
 
     <div class="guess-row" id="guessRow">
-      <input type="text" id="guess" placeholder="Doğru kelimeyi yaz" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <input type="text" id="guess" placeholder="Doğru kelimeyi yaz" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" inputmode="text">
       <button class="primary-small" id="guessBtn">Tahmin</button>
     </div>
 
     <div class="actions" id="actions">
       <button id="shuffleBtn">🔀 Karıştır</button>
-      <button id="hintBtn">💡 İpucu (-5)</button>
+      <button id="hintBtn">💡 İpucu <small>-5 puan</small></button>
       <button id="passBtn">⏭ Pas</button>
     </div>
     <div class="actions hidden" id="nextRow">

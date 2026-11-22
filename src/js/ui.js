@@ -74,7 +74,20 @@ export function createUI() {
       t.textContent = toDisplay(ch);
       el.tiles.appendChild(t);
     });
+    sizeTiles(el.tiles.children.length);
   }
+
+  // Harf kutularını ekran genişliğine sığdırır: uzun kelimelerde küçülür,
+  // ama 26px altına inmez (dokunmaya ve okumaya yetecek kadar kalır)
+  let lastCount = 0;
+  function sizeTiles(count) {
+    lastCount = count;
+    const gap = 6;
+    const avail = el.tiles.clientWidth || 300;
+    const fit = Math.floor((avail - gap * (count - 1)) / count);
+    el.tiles.style.setProperty("--tile-w", Math.max(26, Math.min(48, fit)) + "px");
+  }
+  window.addEventListener("resize", () => { if (lastCount) sizeTiles(lastCount); });
 
   /** Oyun durumunu ekrana yansıtır. */
   function render(game) {
