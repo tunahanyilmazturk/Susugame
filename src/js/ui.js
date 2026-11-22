@@ -16,6 +16,8 @@ export function createUI() {
     rounds: $("rounds"),
     startBtn: $("startBtn"),
     scores: $("scores"),
+    progress: $("progress"),
+    progressBar: $("progressBar"),
     roundInfo: $("roundInfo"),
     category: $("category"),
     tiles: $("tiles"),
@@ -57,6 +59,16 @@ export function createUI() {
     });
   }
 
+  // Sınırlı modda tamamlanan tur oranını gösterir; sınırsızda gizlenir
+  function renderProgress(game) {
+    const limited = game.totalRounds > 0;
+    el.progress.classList.toggle("hidden", !limited);
+    if (!limited) return;
+    const completed = game.round.done ? game.roundCount : game.roundCount - 1;
+    const pct = Math.min(100, (completed / game.totalRounds) * 100);
+    el.progressBar.style.width = pct + "%";
+  }
+
   function renderTiles(round) {
     el.tiles.innerHTML = "";
     if (round.hinted && !round.done) {
@@ -94,6 +106,7 @@ export function createUI() {
     const round = game.round;
     const total = game.totalRounds > 0 ? `${game.roundCount}/${game.totalRounds}` : `${game.roundCount}`;
     renderScores(game);
+    renderProgress(game);
     el.roundInfo.textContent =
       `Tur ${total} · ${[...round.word].length} harfli · Sıra: ${game.players[game.turn].name}`;
     el.category.textContent = `Kategori: ${round.category}`;

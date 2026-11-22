@@ -9,104 +9,196 @@
 <meta name="apple-mobile-web-app-title" content="Kelimeler">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Karışık Kelimeler</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600..800;1,9..144,700&family=Nunito:wght@500;700;800&display=swap">
 <style>
-/* ---- Renk tokenları ---- */
+/* ==========================================================
+   Karışık Kelimeler — "kâğıt ve mürekkep" teması
+   Sıcak krem zemin, mürekkep rengi metin, gül ve adaçayı vurguları.
+   Renkler yalnızca :root tokenlarında tanımlanır.
+   ========================================================== */
+
 :root {
-  --bg: #fff5f8;
-  --card: #ffffff;
-  --ink: #2d2233;
-  --muted: #7a6b80;
-  --accent: #e0457b;
-  --accent-ink: #ffffff;
-  --ok: #2e9e6a;
-  --bad: #d64545;
-  --tile: #ffe3ec;
-  --tile-ink: #8a1f4b;
-  --line: #f0d9e3;
+  --paper: #fbf3e7;       /* sayfa zemini */
+  --dot: #eadbc6;         /* zemindeki nokta desen */
+  --card: #fffdf8;        /* kart yüzeyi */
+  --ink: #2b1d2e;         /* ana metin: mürekkep */
+  --muted: #7d6a7f;       /* ikincil metin */
+  --rose: #d94f70;        /* birincil vurgu */
+  --rose-soft: #fbe3ea;   /* vurgunun açık tonu */
+  --sage: #3f8f6b;        /* doğru / başarı */
+  --bad: #c43d3d;         /* yanlış */
+  --tile: #fffaf0;        /* harf kartı */
+  --tile-edge: #e3d2b8;   /* harf kartının alt kalınlığı */
+  --line: #eadccb;        /* kenarlıklar */
+  --btn: #f4e9d8;         /* ikincil düğme */
+  --shadow: rgba(43, 29, 46, 0.08);
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #1d1724;
-    --card: #2a2233;
-    --ink: #f6eefa;
-    --muted: #b3a4bd;
-    --accent: #ff6d9a;
-    --accent-ink: #1d1724;
-    --ok: #5fd29a;
-    --bad: #ff7676;
-    --tile: #3b2f47;
-    --tile-ink: #ffd6e6;
-    --line: #3d3250;
+    --paper: #171221;
+    --dot: #241d30;
+    --card: #211a2c;
+    --ink: #f6eee4;
+    --muted: #a99bb0;
+    --rose: #ff7b9c;
+    --rose-soft: #3a2433;
+    --sage: #6fd1a2;
+    --bad: #ff8585;
+    --tile: #2e2538;
+    --tile-edge: #120e1a;
+    --line: #3a2f47;
+    --btn: #2a2236;
+    --shadow: rgba(0, 0, 0, 0.35);
   }
 }
 
 /* ---- Temel ---- */
 * { box-sizing: border-box; }
+html { color-scheme: light dark; }
 body {
   margin: 0;
   min-height: 100vh;
   min-height: 100dvh; /* mobil tarayıcı çubukları açıkken de tam yükseklik */
-  background: var(--bg);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.2px);
+  background-size: 18px 18px;
   color: var(--ink);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-body);
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
   -webkit-text-size-adjust: 100%;
-  /* Çentik ve alt çubuk payı; en az 16px kenar boşluğu */
   padding:
     max(16px, env(safe-area-inset-top, 0px))
     max(16px, env(safe-area-inset-right, 0px))
     max(16px, env(safe-area-inset-bottom, 0px))
     max(16px, env(safe-area-inset-left, 0px));
 }
+
 .card {
   width: 100%;
   max-width: 520px;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  border-radius: 24px;
+  padding: 28px 24px 24px;
+  box-shadow: 0 1px 0 var(--line), 0 18px 40px -18px var(--shadow);
 }
-h1 { margin: 0 0 4px; font-size: 1.6rem; text-align: center; }
-.sub { margin: 0 0 20px; text-align: center; color: var(--muted); font-size: 0.95rem; }
+
 .hidden { display: none !important; }
-label { display: block; font-size: 0.9rem; color: var(--muted); margin: 12px 0 6px; }
+
+h1 {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-align: center;
+  text-wrap: balance;
+}
+h1 em { font-style: italic; color: var(--rose); font-weight: 700; }
+
+.sub {
+  margin: 0 0 22px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 1rem;
+  text-wrap: balance;
+}
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  margin: 14px 0 6px;
+}
+
 input[type="text"], input.name, select {
   width: 100%;
-  padding: 12px 14px;
+  padding: 13px 14px;
+  font: inherit;
   font-size: 1.05rem;
+  font-weight: 600;
   border: 2px solid var(--line);
-  border-radius: 12px;
-  background: var(--bg);
+  border-radius: 14px;
+  background: var(--card);
   color: var(--ink);
   outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-input:focus, select:focus { border-color: var(--accent); }
+input::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1rem;
+}
+input:focus, select:focus {
+  border-color: var(--rose);
+  box-shadow: 0 0 0 4px var(--rose-soft);
+}
 select { appearance: auto; }
+
 button {
   font: inherit;
+  font-weight: 800;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 12px 16px;
-  min-height: 44px; /* Apple ve Google'ın önerdiği dokunma alanı */
-  touch-action: manipulation; /* çift dokunma zoom gecikmesini kaldırır */
+  min-height: 44px; /* dokunma alanı */
+  touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   cursor: pointer;
-  background: var(--line);
+  background: var(--btn);
   color: var(--ink);
-  font-weight: 600;
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  transition: transform 0.08s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
-button:disabled { opacity: 0.45; cursor: default; }
+button:hover { background: var(--rose-soft); }
+button:active { transform: translateY(1px); }
+button:disabled { opacity: 0.45; cursor: default; transform: none; background: var(--btn); }
+button:focus-visible { outline: 3px solid var(--rose); outline-offset: 2px; }
+
+/* Ana eylem: gül rengi, alt gölgeli "basılabilir" görünüm */
 button.primary {
-  background: var(--accent);
-  color: var(--accent-ink);
   width: 100%;
-  margin-top: 18px;
+  margin-top: 20px;
+  padding: 15px 16px;
   font-size: 1.05rem;
+  background: var(--rose);
+  color: #fff;
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--rose) 60%, #000);
 }
-button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+button.primary:hover { background: var(--rose); filter: brightness(1.05); }
+button.primary:active { transform: translateY(3px); box-shadow: 0 1px 0 color-mix(in srgb, var(--rose) 60%, #000); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) button.primary { color: #1d1424; }
+}
+
+/* ---- Tur ilerlemesi ---- */
+.progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+  margin: 16px 0 0;
+}
+.progress-bar {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--rose), color-mix(in srgb, var(--rose) 60%, var(--sage)));
+  transition: width 0.4s ease;
+}
 
 /* ---- Skorlar ---- */
 .scores { display: flex; gap: 10px; }
@@ -114,56 +206,117 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   flex: 1;
   min-width: 0;
   text-align: center;
-  padding: 10px;
-  border-radius: 14px;
-  border: 2px solid var(--line);
+  padding: 12px 10px 10px;
+  border-radius: 16px;
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
-.score.turn { border-color: var(--accent); }
-.score .n { font-size: 0.85rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.score .p { font-size: 1.6rem; font-weight: 700; }
+.score.turn {
+  border-color: var(--rose);
+  background: var(--rose-soft);
+}
+.score .n {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.score.turn .n { color: var(--ink); }
+.score.turn .n::before { content: "● "; color: var(--rose); }
+.score .p {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
 
-/* ---- Tur ---- */
-.round-info { text-align: center; margin: 18px 0 6px; color: var(--muted); font-size: 0.95rem; }
+/* ---- Tur bilgisi ---- */
+.round-info {
+  text-align: center;
+  margin: 18px 0 8px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
 .category-row { display: flex; justify-content: center; }
 .category {
   font-size: 0.85rem;
-  font-weight: 600;
-  padding: 4px 12px;
+  font-weight: 800;
+  padding: 5px 14px;
   border-radius: 999px;
-  background: var(--line);
-  color: var(--ink);
+  background: var(--rose-soft);
+  color: var(--rose);
 }
+
+/* ---- Harf kartları ---- */
 .tiles {
   --tile-w: 48px; /* ui.js ekran genişliğine göre günceller */
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px 6px;
   justify-content: center;
-  min-height: 64px;
-  margin: 10px 0 14px;
+  min-height: 84px;
+  margin: 14px 0 16px;
+  padding: 8px 0 4px;
 }
 .tile {
   width: var(--tile-w);
   height: calc(var(--tile-w) * 1.17);
-  font-size: calc(var(--tile-w) * 0.5);
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: calc(var(--tile-w) * 0.5);
+  font-weight: 800;
+  border-radius: 10px;
   background: var(--tile);
-  color: var(--tile-ink);
-  animation: pop 0.3s ease both;
+  color: var(--ink);
+  box-shadow: 0 4px 0 var(--tile-edge), 0 8px 14px -8px var(--shadow);
+  border: 1px solid var(--line);
+  animation: pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
 }
-.tile.reveal { background: var(--ok); color: #fff; }
-.tile.hint { background: transparent; border: 2px dashed var(--accent); color: var(--accent); }
-@keyframes pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+/* El ile yerleştirilmiş his: her kartı biraz farklı döndür */
+.tile:nth-child(4n+1) { rotate: -2.5deg; }
+.tile:nth-child(4n+2) { rotate: 1.5deg; }
+.tile:nth-child(4n+3) { rotate: -1deg; }
+.tile:nth-child(4n)   { rotate: 2deg; }
 
-.msg { min-height: 24px; text-align: center; font-weight: 600; margin: 6px 0 4px; }
-.msg.ok { color: var(--ok); }
+.tile.reveal {
+  background: var(--sage);
+  border-color: var(--sage);
+  color: #fff;
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--sage) 55%, #000), 0 8px 14px -8px var(--shadow);
+  rotate: 0deg;
+}
+.tile.hint {
+  background: transparent;
+  border: 2px dashed var(--rose);
+  box-shadow: none;
+  color: var(--rose);
+  rotate: 0deg;
+}
+@keyframes pop {
+  from { transform: scale(0.6) translateY(6px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* ---- Mesajlar ---- */
+.msg {
+  min-height: 26px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 1rem;
+  margin: 4px 0 6px;
+}
+.msg.ok { color: var(--sage); }
 .msg.bad { color: var(--bad); }
-.msg.info { color: var(--muted); font-weight: 500; }
+.msg.info { color: var(--muted); font-weight: 700; }
 
 .shake { animation: shake 0.4s; }
 @keyframes shake {
@@ -173,32 +326,77 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 }
 
 /* ---- Girdi ve eylemler ---- */
-.guess-row { display: flex; gap: 8px; margin-top: 8px; }
-.guess-row input { flex: 1; min-width: 0; text-align: center; }
-.guess-row button { padding: 12px 20px; }
-.actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
-.actions button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 12px 6px; }
-.actions button small { font-size: 0.75rem; font-weight: 500; color: var(--muted); }
-.actions button:disabled small { color: inherit; }
-.footer-actions { margin-top: 18px; text-align: center; }
-.footer-actions button { background: transparent; color: var(--muted); font-weight: 500; font-size: 0.9rem; }
-
-/* Dar ekranlar (küçük telefonlar) */
-@media (max-width: 380px) {
-  .card { padding: 18px; border-radius: 16px; }
-  h1 { font-size: 1.35rem; }
-  .score .p { font-size: 1.3rem; }
-  .actions button { font-size: 0.9rem; }
+.guess-row { display: flex; gap: 8px; margin-top: 10px; }
+.guess-row input {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.guess-row button { padding: 12px 20px; background: var(--ink); color: var(--paper); box-shadow: none; }
+.guess-row button:hover { background: var(--ink); filter: brightness(1.2); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .guess-row button { color: var(--paper); }
 }
 
-/* Yatay telefon ve kısa ekranlarda kartın taşmasını önler */
+.actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+.actions button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 12px 6px;
+  font-size: 0.95rem;
+}
+.actions button small { font-size: 0.75rem; font-weight: 700; color: var(--muted); }
+.actions button:disabled small { color: inherit; }
+
+.footer-actions { margin-top: 18px; text-align: center; }
+.footer-actions button {
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.footer-actions button:hover { background: transparent; color: var(--ink); }
+
+/* ---- Oyun sonu ---- */
+#endPanel { text-align: center; padding: 8px 0; }
+#endPanel h1 { font-size: 2.2rem; }
+#finalText {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 10px 0 0;
+  text-wrap: balance;
+}
+
+/* ---- Dar ekranlar (küçük telefonlar) ---- */
+@media (max-width: 380px) {
+  .card { padding: 22px 18px 18px; border-radius: 20px; }
+  h1 { font-size: 1.7rem; }
+  .score .p { font-size: 1.5rem; }
+  .actions button { font-size: 0.85rem; }
+}
+
+/* Kısa ekranlarda (yatay telefon) kartın üstten başlamasını sağlar */
 @media (max-height: 560px) {
   body { align-items: flex-start; }
-  .card { margin: 0 auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tile, .shake { animation: none; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 </style>
 </head>
@@ -207,7 +405,7 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
   <!-- Kurulum ekranı -->
   <section id="setup">
-    <h1>🔤 Karışık Kelimeler</h1>
+    <h1>Karışık <em>Kelimeler</em></h1>
     <p class="sub">Harfler karıştırılır, doğrusunu birlikte bulmaya çalışın!</p>
     <label for="p1">1. oyuncu</label>
     <input class="name" id="p1" maxlength="16" value="Oyuncu 1">
@@ -226,6 +424,7 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   <!-- Oyun ekranı -->
   <section id="game" class="hidden">
     <div class="scores" id="scores"></div>
+    <div class="progress" id="progress" aria-hidden="true"><span class="progress-bar" id="progressBar"></span></div>
     <div class="round-info" id="roundInfo"></div>
     <div class="category-row"><span class="category" id="category"></span></div>
     <div class="tiles" id="tiles"></div>
@@ -252,14 +451,14 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
   <!-- Oyun sonu paneli -->
   <section id="endPanel" class="hidden">
-    <h1>🏁 Oyun bitti</h1>
+    <h1>Oyun <em>bitti</em></h1>
     <p class="sub" id="finalText"></p>
     <button class="primary" id="restartBtn">Yeni oyun</button>
   </section>
 
 </div>
 <script>
-(()=>{var e=(t,n)=>({word:t,category:n}),l="Yiyecek & \u0130\xE7ecek",c="Do\u011Fa",k="E\u015Fya",f="Duygu & A\u015Fk",y="M\xFCzik & Sanat",L="Ula\u015F\u0131m",w="Tatil & Macera",z="Zaman & Mevsim",x="Yer",T="\u0130nsan & Meslek",G=[e("elma",l),e("kalem",k),e("masa",k),e("kitap",k),e("g\xFCne\u015F",c),e("deniz",c),e("\xE7i\xE7ek",c),e("bah\xE7e",x),e("okul",x),e("\xF6\u011Fretmen",T),e("telefon",k),e("bilgisayar",k),e("televizyon",k),e("pencere","Ev"),e("kap\u0131","Ev"),e("sandalye",k),e("araba",L),e("u\xE7ak",L),e("gemi",L),e("tren",L),e("otob\xFCs",L),e("a\u011Fa\xE7",c),e("ya\u011Fmur",c),e("bulut",c),e("ayakkab\u0131","E\u015Fya"),e("\xE7anta",k),e("\u015Femsiye",k),e("g\xF6zl\xFCk",k),e("buzdolab\u0131","Ev"),e("kahve",l),e("\xE7ay",l),e("s\xFCt",l),e("ekmek",l),e("peynir",l),e("zeytin",l),e("portakal",l),e("karpuz",l),e("\xFCz\xFCm",l),e("\xE7ilek",l),e("kiraz",l),e("\u015Fark\u0131",y),e("dans",y),e("resim",y),e("m\xFCzik",y),e("gitar",y),e("piyano",y),e("tiyatro",y),e("sinema",y),e("havuz",x),e("orman",c),e("da\u011F",c),e("nehir",c),e("g\xF6l",c),e("\u015Fehir",x),e("k\xF6pr\xFC",x),e("hastane",x),e("eczane",x),e("k\xFCt\xFCphane",x),e("doktor",T),e("m\xFChendis",T),e("g\xF6ky\xFCz\xFC",c),e("y\u0131ld\u0131z",c),e("sevgi",f),e("mutlu",f),e("g\xFCl\xFCmseme",f),e("kalp",f),e("\xF6p\xFCc\xFCk",f),e("tatil",w),e("sahil",w),e("bal\u0131k","Hayvan"),e("gece",z),e("hediye",f),e("\xE7ikolata",l),e("sevgili",f),e("romantik",f),e("ak\u015Fam",z),e("yemek",l),e("tatl\u0131",l),e("g\xFCzel","Genel"),e("bisiklet",L),e("pasta",l),e("mum","Ev"),e("kahkaha",f),e("yolculuk",w),e("macera",w),e("hayal",f),e("r\xFCya",f),e("\u0131\u015F\u0131k",c),e("s\xFCrpriz",f),e("an\u0131","Genel"),e("hazine","Genel"),e("kumsal",w),e("f\u0131rt\u0131na",c),e("\u015Felale",c),e("kelebek","Hayvan"),e("papatya",c),e("g\xFCl\xFCc\xFCk",f),e("bahar",z),e("k\u0131\u015F",z),e("sonbahar",z),e("hikaye",y),e("\u015Fiir",y),e("kahvalt\u0131",l),e("bulmaca","Genel"),e("kurabiye",l),e("limonata",l),e("maceraperest","Genel"),e("k\u0131rm\u0131z\u0131","Renk"),e("mavi","Renk"),e("y\u0131ld\xF6n\xFCm\xFC",f)];var M={correct:10,hinted:5},$=M.correct-M.hinted,I=30,b=["Oyuncu 1","Oyuncu 2"];var O=10;var ne={\u00E7:"c",\u011F:"g",\u0131:"i",i:"i",\u00F6:"o",\u015F:"s",\u00FC:"u",\u00E2:"a",\u00EE:"i",\u00FB:"u"};function S(t){return t.toLocaleLowerCase("tr-TR").trim().replace(/[çğıöşüâîû]/g,n=>ne[n])}function B(t){return t.toLocaleUpperCase("tr-TR")}function C(t,n=Math.random){let r=t.slice();for(let u=r.length-1;u>0;u--){let h=Math.floor(n()*(u+1));[r[u],r[h]]=[r[h],r[u]]}return r}function N(t,n=Math.random){let r=[...t],u=t;for(let h=0;h<I&&u===t;h++)u=C(r,n).join("");return u}function U(t=b,n={}){var r,u,h;return{words:(r=n.words)!=null?r:G,rng:(u=n.rng)!=null?u:Math.random,totalRounds:(h=n.totalRounds)!=null?h:O,players:t.map((E,R)=>({name:(E||"").trim()||b[R]||`Oyuncu ${R+1}`,score:0})),turn:0,roundCount:0,round:null,pool:[]}}function se(t){return t.pool.length===0&&(t.pool=C(t.words,t.rng)),t.pool.pop()}function A(t){t.turn=(t.turn+1)%t.players.length}function H(t){let{word:n,category:r}=se(t);return t.round={word:n,category:r,scrambled:N(n,t.rng),hinted:!1,done:!1,result:null,solvedBy:null},t.roundCount++,t}function F(t){var n;return t.totalRounds>0&&t.roundCount>=t.totalRounds&&!!((n=t.round)!=null&&n.done)}function _(t){let n=t.round;return!n||n.done||(n.scrambled=N(n.word,t.rng)),t}function P(t){let n=t.round;return!n||n.done||n.hinted||(n.hinted=!0),t}function Y(t,n){let r=t.round;if(!r||r.done||!n.trim())return{correct:!1,ignored:!0};if(S(n)!==S(r.word))return{correct:!1};let u=r.hinted?M.hinted:M.correct;return t.players[t.turn].score+=u,r.done=!0,r.result="solved",r.solvedBy=t.turn,A(t),{correct:!0,points:u}}function W(t){let n=t.round;return!n||n.done||(n.done=!0,n.result="passed",A(t)),t}function j(t){let n=[...t.players].sort((h,E)=>E.score-h.score),r=n[0],u=n.length>1&&n[1].score===r.score;return{players:t.players,winner:u?null:r,rounds:t.roundCount}}var o=t=>document.getElementById(t);function Z(){let t={app:o("app"),setup:o("setup"),game:o("game"),endPanel:o("endPanel"),p1:o("p1"),p2:o("p2"),rounds:o("rounds"),startBtn:o("startBtn"),scores:o("scores"),roundInfo:o("roundInfo"),category:o("category"),tiles:o("tiles"),msg:o("msg"),guess:o("guess"),guessBtn:o("guessBtn"),guessRow:o("guessRow"),actions:o("actions"),shuffleBtn:o("shuffleBtn"),hintBtn:o("hintBtn"),passBtn:o("passBtn"),nextRow:o("nextRow"),nextBtn:o("nextBtn"),endBtn:o("endBtn"),restartBtn:o("restartBtn"),finalText:o("finalText")};function n(s,d="info"){t.msg.textContent=s,t.msg.className="msg "+d}function r(){t.app.classList.remove("shake"),t.app.offsetWidth,t.app.classList.add("shake")}function u(s){t.scores.innerHTML="",s.players.forEach((d,p)=>{let m=document.createElement("div");m.className="score"+(p===s.turn?" turn":""),m.innerHTML='<div class="n"></div><div class="p"></div>',m.querySelector(".n").textContent=d.name,m.querySelector(".p").textContent=d.score,t.scores.appendChild(m)})}function h(s){if(t.tiles.innerHTML="",s.hinted&&!s.done){let p=document.createElement("div");p.className="tile hint",p.title=`\u0130pucu (-${$} puan)`,p.textContent=B(s.word[0]),t.tiles.appendChild(p)}[...s.done?s.word:s.scrambled].forEach((p,m)=>{let g=document.createElement("div");g.className="tile"+(s.done?" reveal":""),g.style.animationDelay=m*40+"ms",g.textContent=B(p),t.tiles.appendChild(g)}),R(t.tiles.children.length)}let E=0;function R(s){E=s;let d=6,p=t.tiles.clientWidth||300,m=Math.floor((p-d*(s-1))/s);t.tiles.style.setProperty("--tile-w",Math.max(26,Math.min(48,m))+"px")}window.addEventListener("resize",()=>{E&&R(E)});function J(s){let d=s.round,p=s.totalRounds>0?`${s.roundCount}/${s.totalRounds}`:`${s.roundCount}`;u(s),t.roundInfo.textContent=`Tur ${p} \xB7 ${[...d.word].length} harfli \xB7 S\u0131ra: ${s.players[s.turn].name}`,t.category.textContent=`Kategori: ${d.category}`,h(d),t.guessRow.classList.toggle("hidden",d.done),t.actions.classList.toggle("hidden",d.done),t.nextRow.classList.toggle("hidden",!d.done),t.hintBtn.disabled=d.hinted,t.nextBtn.textContent=s.totalRounds>0&&s.roundCount>=s.totalRounds?"Sonu\xE7lar\u0131 g\xF6r \u{1F3C1}":"Sonraki Kelime \u25B6"}function Q(){t.game.classList.add("hidden"),t.endPanel.classList.add("hidden"),t.setup.classList.remove("hidden")}function V(){t.setup.classList.add("hidden"),t.endPanel.classList.add("hidden"),t.game.classList.remove("hidden")}function ee(s){let{players:d,winner:p,rounds:m}=j(s),g=d.map(D=>`${D.name}: ${D.score}`).join("  \xB7  "),te=p?`${p.name} kazand\u0131!`:"Berabere!";t.finalText.textContent=`${m} tur oynand\u0131. ${g}  \u2014  ${te}`,t.game.classList.add("hidden"),t.endPanel.classList.remove("hidden")}return{el:t,setMessage:n,shake:r,render:J,showSetup:Q,showGame:V,showEnd:ee,readNames:()=>[t.p1.value,t.p2.value],readRounds:()=>Number(t.rounds.value),readGuess:()=>t.guess.value,clearGuess:()=>{t.guess.value="",t.guess.focus()},selectGuess:()=>t.guess.select(),focusNext:()=>t.nextBtn.focus()}}var a=Z(),{el:v}=a,i=null;function re(){i=U(a.readNames(),{totalRounds:a.readRounds()}),a.showGame(),K()}function K(){if(F(i))return a.showEnd(i);H(i),a.setMessage("Ne buldunuz? Tahmininizi yaz\u0131n.","info"),a.clearGuess(),a.render(i)}function q(t){var n;try{(n=navigator.vibrate)==null||n.call(navigator,t)}catch{}}function X(){let t=Y(i,a.readGuess());t.ignored||(t.correct?(q([30,40,30]),a.setMessage(`\u{1F389} Do\u011Fru! +${t.points} puan`,"ok"),a.render(i),a.focusNext()):(q(120),a.setMessage("\u274C Olmad\u0131, tekrar deneyin!","bad"),a.shake(),a.selectGuess()))}function oe(){!i.round||i.round.done||i.round.hinted||(P(i),a.setMessage("\u0130pucu verildi. Do\u011Fru bulursan\u0131z daha az puan al\u0131rs\u0131n\u0131z.","info"),a.render(i))}function ae(){!i.round||i.round.done||(W(i),a.setMessage(`Cevap: ${B(i.round.word)}`,"info"),a.render(i),a.focusNext())}function ie(){_(i),a.render(i)}v.startBtn.addEventListener("click",re);v.guessBtn.addEventListener("click",X);v.guess.addEventListener("keydown",t=>{t.key==="Enter"&&X()});v.hintBtn.addEventListener("click",oe);v.passBtn.addEventListener("click",ae);v.shuffleBtn.addEventListener("click",ie);v.nextBtn.addEventListener("click",K);v.endBtn.addEventListener("click",()=>a.showEnd(i));v.restartBtn.addEventListener("click",a.showSetup);})();
+(()=>{var e=(t,n)=>({word:t,category:n}),d="Yiyecek & \u0130\xE7ecek",p="Do\u011Fa",k="E\u015Fya",f="Duygu & A\u015Fk",y="M\xFCzik & Sanat",L="Ula\u015F\u0131m",B="Tatil & Macera",w="Zaman & Mevsim",x="Yer",T="\u0130nsan & Meslek",$=[e("elma",d),e("kalem",k),e("masa",k),e("kitap",k),e("g\xFCne\u015F",p),e("deniz",p),e("\xE7i\xE7ek",p),e("bah\xE7e",x),e("okul",x),e("\xF6\u011Fretmen",T),e("telefon",k),e("bilgisayar",k),e("televizyon",k),e("pencere","Ev"),e("kap\u0131","Ev"),e("sandalye",k),e("araba",L),e("u\xE7ak",L),e("gemi",L),e("tren",L),e("otob\xFCs",L),e("a\u011Fa\xE7",p),e("ya\u011Fmur",p),e("bulut",p),e("ayakkab\u0131","E\u015Fya"),e("\xE7anta",k),e("\u015Femsiye",k),e("g\xF6zl\xFCk",k),e("buzdolab\u0131","Ev"),e("kahve",d),e("\xE7ay",d),e("s\xFCt",d),e("ekmek",d),e("peynir",d),e("zeytin",d),e("portakal",d),e("karpuz",d),e("\xFCz\xFCm",d),e("\xE7ilek",d),e("kiraz",d),e("\u015Fark\u0131",y),e("dans",y),e("resim",y),e("m\xFCzik",y),e("gitar",y),e("piyano",y),e("tiyatro",y),e("sinema",y),e("havuz",x),e("orman",p),e("da\u011F",p),e("nehir",p),e("g\xF6l",p),e("\u015Fehir",x),e("k\xF6pr\xFC",x),e("hastane",x),e("eczane",x),e("k\xFCt\xFCphane",x),e("doktor",T),e("m\xFChendis",T),e("g\xF6ky\xFCz\xFC",p),e("y\u0131ld\u0131z",p),e("sevgi",f),e("mutlu",f),e("g\xFCl\xFCmseme",f),e("kalp",f),e("\xF6p\xFCc\xFCk",f),e("tatil",B),e("sahil",B),e("bal\u0131k","Hayvan"),e("gece",w),e("hediye",f),e("\xE7ikolata",d),e("sevgili",f),e("romantik",f),e("ak\u015Fam",w),e("yemek",d),e("tatl\u0131",d),e("g\xFCzel","Genel"),e("bisiklet",L),e("pasta",d),e("mum","Ev"),e("kahkaha",f),e("yolculuk",B),e("macera",B),e("hayal",f),e("r\xFCya",f),e("\u0131\u015F\u0131k",p),e("s\xFCrpriz",f),e("an\u0131","Genel"),e("hazine","Genel"),e("kumsal",B),e("f\u0131rt\u0131na",p),e("\u015Felale",p),e("kelebek","Hayvan"),e("papatya",p),e("g\xFCl\xFCc\xFCk",f),e("bahar",w),e("k\u0131\u015F",w),e("sonbahar",w),e("hikaye",y),e("\u015Fiir",y),e("kahvalt\u0131",d),e("bulmaca","Genel"),e("kurabiye",d),e("limonata",d),e("maceraperest","Genel"),e("k\u0131rm\u0131z\u0131","Renk"),e("mavi","Renk"),e("y\u0131ld\xF6n\xFCm\xFC",f)];var M={correct:10,hinted:5},I=M.correct-M.hinted,O=30,b=["Oyuncu 1","Oyuncu 2"];var U=10;var se={\u00E7:"c",\u011F:"g",\u0131:"i",i:"i",\u00F6:"o",\u015F:"s",\u00FC:"u",\u00E2:"a",\u00EE:"i",\u00FB:"u"};function C(t){return t.toLocaleLowerCase("tr-TR").trim().replace(/[çğıöşüâîû]/g,n=>se[n])}function z(t){return t.toLocaleUpperCase("tr-TR")}function S(t,n=Math.random){let o=t.slice();for(let l=o.length-1;l>0;l--){let m=Math.floor(n()*(l+1));[o[l],o[m]]=[o[m],o[l]]}return o}function N(t,n=Math.random){let o=[...t],l=t;for(let m=0;m<O&&l===t;m++)l=S(o,n).join("");return l}function A(t=b,n={}){var o,l,m;return{words:(o=n.words)!=null?o:$,rng:(l=n.rng)!=null?l:Math.random,totalRounds:(m=n.totalRounds)!=null?m:U,players:t.map((R,g)=>({name:(R||"").trim()||b[g]||`Oyuncu ${g+1}`,score:0})),turn:0,roundCount:0,round:null,pool:[]}}function re(t){return t.pool.length===0&&(t.pool=S(t.words,t.rng)),t.pool.pop()}function H(t){t.turn=(t.turn+1)%t.players.length}function F(t){let{word:n,category:o}=re(t);return t.round={word:n,category:o,scrambled:N(n,t.rng),hinted:!1,done:!1,result:null,solvedBy:null},t.roundCount++,t}function P(t){var n;return t.totalRounds>0&&t.roundCount>=t.totalRounds&&!!((n=t.round)!=null&&n.done)}function _(t){let n=t.round;return!n||n.done||(n.scrambled=N(n.word,t.rng)),t}function Y(t){let n=t.round;return!n||n.done||n.hinted||(n.hinted=!0),t}function W(t,n){let o=t.round;if(!o||o.done||!n.trim())return{correct:!1,ignored:!0};if(C(n)!==C(o.word))return{correct:!1};let l=o.hinted?M.hinted:M.correct;return t.players[t.turn].score+=l,o.done=!0,o.result="solved",o.solvedBy=t.turn,H(t),{correct:!0,points:l}}function j(t){let n=t.round;return!n||n.done||(n.done=!0,n.result="passed",H(t)),t}function Z(t){let n=[...t.players].sort((m,R)=>R.score-m.score),o=n[0],l=n.length>1&&n[1].score===o.score;return{players:t.players,winner:l?null:o,rounds:t.roundCount}}var r=t=>document.getElementById(t);function q(){let t={app:r("app"),setup:r("setup"),game:r("game"),endPanel:r("endPanel"),p1:r("p1"),p2:r("p2"),rounds:r("rounds"),startBtn:r("startBtn"),scores:r("scores"),progress:r("progress"),progressBar:r("progressBar"),roundInfo:r("roundInfo"),category:r("category"),tiles:r("tiles"),msg:r("msg"),guess:r("guess"),guessBtn:r("guessBtn"),guessRow:r("guessRow"),actions:r("actions"),shuffleBtn:r("shuffleBtn"),hintBtn:r("hintBtn"),passBtn:r("passBtn"),nextRow:r("nextRow"),nextBtn:r("nextBtn"),endBtn:r("endBtn"),restartBtn:r("restartBtn"),finalText:r("finalText")};function n(s,i="info"){t.msg.textContent=s,t.msg.className="msg "+i}function o(){t.app.classList.remove("shake"),t.app.offsetWidth,t.app.classList.add("shake")}function l(s){t.scores.innerHTML="",s.players.forEach((i,c)=>{let h=document.createElement("div");h.className="score"+(c===s.turn?" turn":""),h.innerHTML='<div class="n"></div><div class="p"></div>',h.querySelector(".n").textContent=i.name,h.querySelector(".p").textContent=i.score,t.scores.appendChild(h)})}function m(s){let i=s.totalRounds>0;if(t.progress.classList.toggle("hidden",!i),!i)return;let c=s.round.done?s.roundCount:s.roundCount-1,h=Math.min(100,c/s.totalRounds*100);t.progressBar.style.width=h+"%"}function R(s){if(t.tiles.innerHTML="",s.hinted&&!s.done){let c=document.createElement("div");c.className="tile hint",c.title=`\u0130pucu (-${I} puan)`,c.textContent=z(s.word[0]),t.tiles.appendChild(c)}[...s.done?s.word:s.scrambled].forEach((c,h)=>{let E=document.createElement("div");E.className="tile"+(s.done?" reveal":""),E.style.animationDelay=h*40+"ms",E.textContent=z(c),t.tiles.appendChild(E)}),D(t.tiles.children.length)}let g=0;function D(s){g=s;let i=6,c=t.tiles.clientWidth||300,h=Math.floor((c-i*(s-1))/s);t.tiles.style.setProperty("--tile-w",Math.max(26,Math.min(48,h))+"px")}window.addEventListener("resize",()=>{g&&D(g)});function Q(s){let i=s.round,c=s.totalRounds>0?`${s.roundCount}/${s.totalRounds}`:`${s.roundCount}`;l(s),m(s),t.roundInfo.textContent=`Tur ${c} \xB7 ${[...i.word].length} harfli \xB7 S\u0131ra: ${s.players[s.turn].name}`,t.category.textContent=`Kategori: ${i.category}`,R(i),t.guessRow.classList.toggle("hidden",i.done),t.actions.classList.toggle("hidden",i.done),t.nextRow.classList.toggle("hidden",!i.done),t.hintBtn.disabled=i.hinted,t.nextBtn.textContent=s.totalRounds>0&&s.roundCount>=s.totalRounds?"Sonu\xE7lar\u0131 g\xF6r \u{1F3C1}":"Sonraki Kelime \u25B6"}function V(){t.game.classList.add("hidden"),t.endPanel.classList.add("hidden"),t.setup.classList.remove("hidden")}function ee(){t.setup.classList.add("hidden"),t.endPanel.classList.add("hidden"),t.game.classList.remove("hidden")}function te(s){let{players:i,winner:c,rounds:h}=Z(s),E=i.map(G=>`${G.name}: ${G.score}`).join("  \xB7  "),ne=c?`${c.name} kazand\u0131!`:"Berabere!";t.finalText.textContent=`${h} tur oynand\u0131. ${E}  \u2014  ${ne}`,t.game.classList.add("hidden"),t.endPanel.classList.remove("hidden")}return{el:t,setMessage:n,shake:o,render:Q,showSetup:V,showGame:ee,showEnd:te,readNames:()=>[t.p1.value,t.p2.value],readRounds:()=>Number(t.rounds.value),readGuess:()=>t.guess.value,clearGuess:()=>{t.guess.value="",t.guess.focus()},selectGuess:()=>t.guess.select(),focusNext:()=>t.nextBtn.focus()}}var a=q(),{el:v}=a,u=null;function oe(){u=A(a.readNames(),{totalRounds:a.readRounds()}),a.showGame(),X()}function X(){if(P(u))return a.showEnd(u);F(u),a.setMessage("Ne buldunuz? Tahmininizi yaz\u0131n.","info"),a.clearGuess(),a.render(u)}function K(t){var n;try{(n=navigator.vibrate)==null||n.call(navigator,t)}catch{}}function J(){let t=W(u,a.readGuess());t.ignored||(t.correct?(K([30,40,30]),a.setMessage(`\u{1F389} Do\u011Fru! +${t.points} puan`,"ok"),a.render(u),a.focusNext()):(K(120),a.setMessage("\u274C Olmad\u0131, tekrar deneyin!","bad"),a.shake(),a.selectGuess()))}function ae(){!u.round||u.round.done||u.round.hinted||(Y(u),a.setMessage("\u0130pucu verildi. Do\u011Fru bulursan\u0131z daha az puan al\u0131rs\u0131n\u0131z.","info"),a.render(u))}function ie(){!u.round||u.round.done||(j(u),a.setMessage(`Cevap: ${z(u.round.word)}`,"info"),a.render(u),a.focusNext())}function ue(){_(u),a.render(u)}v.startBtn.addEventListener("click",oe);v.guessBtn.addEventListener("click",J);v.guess.addEventListener("keydown",t=>{t.key==="Enter"&&J()});v.hintBtn.addEventListener("click",ae);v.passBtn.addEventListener("click",ie);v.shuffleBtn.addEventListener("click",ue);v.nextBtn.addEventListener("click",X);v.endBtn.addEventListener("click",()=>a.showEnd(u));v.restartBtn.addEventListener("click",a.showSetup);})();
 </script>
 </body>
 </html>

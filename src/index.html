@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Kelimeler">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Karışık Kelimeler</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600..800;1,9..144,700&family=Nunito:wght@500;700;800&display=swap">
 <!-- @CSS -->
 </head>
 <body>
@@ -16,7 +17,7 @@
 
   <!-- Kurulum ekranı -->
   <section id="setup">
-    <h1>🔤 Karışık Kelimeler</h1>
+    <h1>Karışık <em>Kelimeler</em></h1>
     <p class="sub">Harfler karıştırılır, doğrusunu birlikte bulmaya çalışın!</p>
     <label for="p1">1. oyuncu</label>
     <input class="name" id="p1" maxlength="16" value="Oyuncu 1">
@@ -35,6 +36,7 @@
   <!-- Oyun ekranı -->
   <section id="game" class="hidden">
     <div class="scores" id="scores"></div>
+    <div class="progress" id="progress" aria-hidden="true"><span class="progress-bar" id="progressBar"></span></div>
     <div class="round-info" id="roundInfo"></div>
     <div class="category-row"><span class="category" id="category"></span></div>
     <div class="tiles" id="tiles"></div>
@@ -61,7 +63,7 @@
 
   <!-- Oyun sonu paneli -->
   <section id="endPanel" class="hidden">
-    <h1>🏁 Oyun bitti</h1>
+    <h1>Oyun <em>bitti</em></h1>
     <p class="sub" id="finalText"></p>
     <button class="primary" id="restartBtn">Yeni oyun</button>
   </section>
