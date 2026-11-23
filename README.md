@@ -55,3 +55,8 @@ Değişiklikten sonra `npm run build` çalıştırıp `dist/index.html` dosyası
 
 - Kurulumda "Tur süresi" seçilirse (30 veya 60 saniye) her turun süresi sayılır. Süre dolunca tur puansız kapanır ve sıra değişir.
 - Oyuncu adları, zorluk, tur sayısı ve süre tarayıcıda hatırlanır (`src/js/storage.js`). Tarayıcı depolaması kapalıysa ayarlar hatırlanmaz, oyun yine oynanır.
+
+## Seri bonusu
+
+- Takım üst üste 3 doğru cevap verirse 3.'ye +5 puan bonus verilir (`src/js/config.js` → `STREAK`).
+- Pas geçmek ve süre dolmak seriyi sıfırlar. Yanlış tahmin seriyi bozmaz.

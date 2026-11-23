@@ -165,6 +165,35 @@ test("isFinished: sonlu modda son tur bitince true, sınırsız modda hiç", () 
   assert.equal(isFinished(endless), false);
 });
 
+test("üçüncü üst üste doğru cevapta seri bonusu verilir", () => {
+  const words = list("elma", "kitap", "masa", "kalem");
+  const g = createGame(["A", "B"], { words, rng: seeded(8) });
+  const results = [];
+  for (let i = 0; i < 3; i++) {
+    startRound(g);
+    results.push(guess(g, g.round.word));
+  }
+  assert.deepEqual(results.map((r) => r.bonus), [0, 0, 5]);
+  assert.equal(results[2].streak, 3);
+  assert.equal(g.players[0].score + g.players[1].score, 10 + 10 + 15);
+});
+
+test("pas ve süre dolumu seriyi sıfırlar, yanlış tahmin bozmaz", () => {
+  const g = createGame(["A", "B"], { words: list("elma", "kitap", "masa"), rng: seeded(8) });
+  startRound(g);
+  guess(g, g.round.word);
+  startRound(g);
+  guess(g, "yanlış");
+  assert.equal(g.streak, 1, "yanlış tahmin seriyi bozmamalı");
+  pass(g);
+  assert.equal(g.streak, 0);
+  startRound(g);
+  guess(g, g.round.word); // seri 1
+  startRound(g);          // açık tur, süre dolar
+  timeUp(g);
+  assert.equal(g.streak, 0);
+});
+
 test("timeUp turu puansız kapatır ve sırayı değiştirir", () => {
   const g = createGame(["A", "B"], { words: list("elma"), rng: seeded(2), timeLimit: 30 });
   assert.equal(g.timeLimit, 30);

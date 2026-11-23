@@ -69,7 +69,8 @@ function submitGuess() {
   if (result.correct) {
     stopTimer();
     buzz([30, 40, 30]);
-    ui.setMessage(`🎉 Doğru! +${result.points} puan`, "ok");
+    const bonusText = result.bonus ? ` · 🔥 ${result.streak} doğru seri bonusu +${result.bonus}` : "";
+    ui.setMessage(`🎉 Doğru! +${result.points} puan${bonusText}`, "ok");
     ui.render(game);
     ui.focusNext();
   } else {

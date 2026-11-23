@@ -1,6 +1,6 @@
 // Oyun kuralları. DOM bilmez; yalnızca durumu (state) değiştirir.
 import { WORDS } from "./words.js";
-import { POINTS, DEFAULT_NAMES, DEFAULT_ROUNDS, DEFAULT_LEVEL, DEFAULT_TIME, LEVELS } from "./config.js";
+import { POINTS, STREAK, DEFAULT_NAMES, DEFAULT_ROUNDS, DEFAULT_LEVEL, DEFAULT_TIME, LEVELS } from "./config.js";
 import { normalize, scramble, shuffle } from "./utils.js";
 
 /** Kelimeleri seçilen zorluk seviyesine göre süzer. */
@@ -29,6 +29,7 @@ export function createGame(names = DEFAULT_NAMES, options = {}) {
       score: 0,
     })),
     turn: 0,
+    streak: 0, // üst üste doğru cevap sayısı (takım genelinde)
     roundCount: 0,
     round: null,
     pool: [],
@@ -82,39 +83,49 @@ export function useHint(game) {
 }
 
 /**
- * Tahmini değerlendirir. Doğruysa puanı verir ve sırayı değiştirir.
- * @returns {{ correct: boolean, ignored?: boolean, points?: number }}
+ * Tahmini değerlendirir. Doğruysa puanı verir (varsa seri bonusu dahil) ve sırayı değiştirir.
+ * @returns {{ correct: boolean, ignored?: boolean, points?: number, bonus?: number, streak?: number }}
  */
 export function guess(game, value) {
   const r = game.round;
   if (!r || r.done || !value.trim()) return { correct: false, ignored: true };
   if (normalize(value) !== normalize(r.word)) return { correct: false };
 
-  const points = r.hinted ? POINTS.hinted : POINTS.correct;
+  const base = r.hinted ? POINTS.hinted : POINTS.correct;
+  game.streak += 1;
+  const bonus = game.streak % STREAK.length === 0 ? STREAK.bonus : 0;
+  const points = base + bonus;
   game.players[game.turn].score += points;
   r.done = true;
   r.result = "solved";
   r.solvedBy = game.turn;
   nextTurn(game);
-  return { correct: true, points };
+  return { correct: true, points, bonus, streak: game.streak };
 }
 
-/** Turu pas geçer: puan verilmez, sıra değişir. */
+/** Seriyi bozar: pas ve süre dolumu bu fonksiyonu kullanır. */
+function breakStreak(game) {
+  game.streak = 0;
+}
+
+/** Turu pas geçer: puan verilmez, sıra değişir, seri sıfırlanır. */
 export function pass(game) {
   const r = game.round;
   if (!r || r.done) return game;
   r.done = true;
   r.result = "passed";
+  breakStreak(game);
   nextTurn(game);
   return game;
 }
 
-/** Süre dolunca turu kapatır: puan yok, sıra değişir (pas gibi). */
+/** Süre dolunca turu kapatır: puan yok, sıra değişir, seri sıfırlanır. */
 export function timeUp(game) {
   const r = game.round;
   if (!r || r.done) return game;
   r.done = true;
   r.result = "timeout";
+  breakStreak(game);
   nextTurn(game);
   return game;
 }

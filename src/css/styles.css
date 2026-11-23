@@ -230,7 +230,16 @@ button.primary:active { transform: translateY(3px); box-shadow: 0 1px 0 color-mi
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
-.category-row { display: flex; justify-content: center; }
+.category-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; }
+.streak {
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sage) 18%, transparent);
+  color: var(--sage);
+  font-variant-numeric: tabular-nums;
+}
 .category {
   font-size: 0.85rem;
   font-weight: 800;

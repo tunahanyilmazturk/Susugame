@@ -25,6 +25,7 @@ export function createUI() {
     progressBar: $("progressBar"),
     roundInfo: $("roundInfo"),
     category: $("category"),
+    streak: $("streak"),
     tiles: $("tiles"),
     msg: $("msg"),
     guess: $("guess"),
@@ -115,6 +116,8 @@ export function createUI() {
     el.roundInfo.textContent =
       `Tur ${total} · ${[...round.word].length} harfli · Sıra: ${game.players[game.turn].name}`;
     el.category.textContent = `Kategori: ${round.category}`;
+    el.streak.classList.toggle("hidden", game.streak < 1);
+    el.streak.textContent = `🔥 Seri ${game.streak}`;
     renderTiles(round);
 
     // Süre göstergesi yalnızca aktif turda ve süre açıksa görünür

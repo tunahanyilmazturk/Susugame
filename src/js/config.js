@@ -22,6 +22,10 @@ export const LEVELS = {
 };
 export const DEFAULT_LEVEL = "karma";
 
+// Seri bonusu: üst üste bu kadar doğru cevapta (pas ve süre dolumu seriyi sıfırlar)
+// her "length" doğru cevaba ek olarak "bonus" puan verilir.
+export const STREAK = { length: 3, bonus: 5 };
+
 // Tur süresi seçenekleri (saniye). 0 = süre yok.
 export const TIME_OPTIONS = [0, 30, 60];
 export const DEFAULT_TIME = 0;
