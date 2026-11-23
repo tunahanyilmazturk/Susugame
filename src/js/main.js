@@ -3,6 +3,7 @@ import { createGame, startRound, reshuffle, useHint, guess, pass, timeUp, isFini
 import { createUI } from "./ui.js";
 import { toDisplay } from "./utils.js";
 import { loadSettings, saveSettings } from "./storage.js";
+import { sfx, setSoundEnabled } from "./sound.js";
 
 const ui = createUI();
 const { el } = ui;
@@ -23,18 +24,26 @@ function stopTimer() {
 
 function startTimer() {
   stopTimer();
+  lastTickSecond = null;
   if (!game.timeLimit) return ui.setTimer(null);
   deadline = Date.now() + game.timeLimit * 1000;
   tick();
   timerId = setInterval(tick, 250);
 }
 
+let lastTickSecond = null;
+
 function tick() {
   if (!game.round || game.round.done) return stopTimer();
   const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
   ui.setTimer(left, game.timeLimit);
+  if (left > 0 && left <= 5 && left !== lastTickSecond) {
+    lastTickSecond = left;
+    sfx.tick();
+  }
   if (left > 0) return;
   stopTimer();
+  sfx.timeout();
   timeUp(game);
   ui.setMessage(`⏰ Süre doldu! Cevap: ${toDisplay(game.round.word)}`, "bad");
   ui.render(game);
@@ -44,8 +53,15 @@ function tick() {
 // ---- Tur akışı ----
 function startGame() {
   const names = ui.readNames();
-  const settings = { names, level: ui.readLevel(), rounds: ui.readRounds(), time: ui.readTime() };
+  const settings = {
+    names,
+    level: ui.readLevel(),
+    rounds: ui.readRounds(),
+    time: ui.readTime(),
+    sound: ui.readSound(),
+  };
   saveSettings(settings);
+  setSoundEnabled(settings.sound);
   game = createGame(names, { totalRounds: settings.rounds, level: settings.level, timeLimit: settings.time });
   ui.showGame();
   newRound();
@@ -54,6 +70,7 @@ function startGame() {
 function newRound() {
   if (isFinished(game)) {
     stopTimer();
+    sfx.end();
     return ui.showEnd(game);
   }
   startRound(game);
@@ -68,12 +85,14 @@ function submitGuess() {
   if (result.ignored) return;
   if (result.correct) {
     stopTimer();
+    sfx.correct();
     buzz([30, 40, 30]);
     const bonusText = result.bonus ? ` · 🔥 ${result.streak} doğru seri bonusu +${result.bonus}` : "";
     ui.setMessage(`🎉 Doğru! +${result.points} puan${bonusText}`, "ok");
     ui.render(game);
     ui.focusNext();
   } else {
+    sfx.wrong();
     buzz(120);
     ui.setMessage("❌ Olmadı, tekrar deneyin!", "bad");
     ui.shake();
@@ -91,6 +110,7 @@ function giveHint() {
 function skip() {
   if (!game.round || game.round.done) return;
   stopTimer();
+  sfx.pass();
   pass(game);
   ui.setMessage(`Cevap: ${toDisplay(game.round.word)}`, "info");
   ui.render(game);
@@ -114,4 +134,6 @@ el.endBtn.addEventListener("click", () => { stopTimer(); ui.showEnd(game); });
 el.restartBtn.addEventListener("click", () => { stopTimer(); ui.showSetup(); });
 
 // Sayfa açılınca önceki ayarları geri yükle
-ui.applySettings(loadSettings());
+const savedSettings = loadSettings();
+ui.applySettings(savedSettings);
+setSoundEnabled(ui.readSound());

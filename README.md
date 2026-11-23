@@ -60,3 +60,7 @@ Değişiklikten sonra `npm run build` çalıştırıp `dist/index.html` dosyası
 
 - Takım üst üste 3 doğru cevap verirse 3.'ye +5 puan bonus verilir (`src/js/config.js` → `STREAK`).
 - Pas geçmek ve süre dolmak seriyi sıfırlar. Yanlış tahmin seriyi bozmaz.
+
+## Ses
+
+- Kurulumda "Ses" açık ya da kapalı seçilir. Doğru, yanlış, pas, süre dolumu ve son 5 saniyedeki tik sesleri Web Audio ile üretilir; dosya yoktur (`src/js/sound.js`).

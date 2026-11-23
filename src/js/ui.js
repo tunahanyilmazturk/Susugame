@@ -16,6 +16,7 @@ export function createUI() {
     rounds: $("rounds"),
     level: $("level"),
     timeSel: $("timeSel"),
+    soundSel: $("soundSel"),
     timer: $("timer"),
     timerText: $("timerText"),
     timerBar: $("timerBar"),
@@ -164,6 +165,7 @@ export function createUI() {
     readRounds: () => Number(el.rounds.value),
     readLevel: () => el.level.value,
     readTime: () => Number(el.timeSel.value),
+    readSound: () => el.soundSel.value === "1",
     // Kayıtlı ayarı yalnızca seçenek listesinde varsa uygular
     applySettings: (s = {}) => {
       const has = (sel, v) => [...sel.options].some((o) => o.value === String(v));
@@ -174,6 +176,7 @@ export function createUI() {
       if (has(el.level, s.level)) el.level.value = s.level;
       if (has(el.rounds, s.rounds)) el.rounds.value = String(s.rounds);
       if (has(el.timeSel, s.time)) el.timeSel.value = String(s.time);
+      if (typeof s.sound === "boolean") el.soundSel.value = s.sound ? "1" : "0";
     },
     /** Süre göstergesini günceller. left null ise gizler. */
     setTimer: (left, total) => {
